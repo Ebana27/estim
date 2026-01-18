@@ -2,11 +2,10 @@ name: Build iOS App
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
 
 jobs:
-  build-ios:
+  ios-build:
     runs-on: macos-latest
 
     steps:
@@ -18,10 +17,15 @@ jobs:
         with:
           node-version: 20
 
-      - name: Install dependencies
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.1
+
+      - name: Install JS dependencies
         run: npm install
 
-      - name: Build web assets
+      - name: Build web
         run: npm run build
 
       - name: Sync Capacitor
@@ -29,6 +33,13 @@ jobs:
 
       - name: Install CocoaPods
         run: |
-          sudo gem install cocoapods
           cd ios/App
           pod install
+
+      - name: Install Fastlane
+        run: sudo gem install fastlane
+
+      - name: Build iOS (unsigned for now)
+        run: |
+          cd ios/App
+          fastlane build
