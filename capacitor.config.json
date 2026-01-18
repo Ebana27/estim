@@ -1,0 +1,6 @@
+{
+  "appId": "com.example.estimapp",
+  "appName": "estim-app",
+  "webDir": "dist",
+  "bundledWebRuntime": false
+}

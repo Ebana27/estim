@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>ESTIM - Accueil</title>
+
+  <!-- Ionic Framework (CSS & JS) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ionic/core/css/ionic.bundle.css" />
+  <script type="module" src="https://cdn.jsdelivr.net/npm/@ionic/core/dist/ionic/ionic.esm.js"></script>
+  <script nomodule src="https://cdn.jsdelivr.net/npm/@ionic/core/dist/ionic/ionic.js"></script>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Configuration Tailwind -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            estim: {
+              green: 'var(--estim-green)',
+              black: 'var(--estim-black)',
+              walnut: 'var(--estim-dark-walnut)',
+              gold: 'var(--estim-golden-pollen)',
+              linen: 'var(--estim-soft-linen)',
+              gray: '#6c757dff'
+            }
+          },
+          fontFamily: {
+            sans: ['Poppins', 'sans-serif'],
+          },
+          boxShadow: {
+            'soft': '0 10px 40px -10px rgba(0,0,0,0.08)',
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Link to external CSS file containing the visual identity -->
+  <link rel="stylesheet" href="../src/css/style.css" />
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    /* Animation douce pour le contenu */
+    .fade-in-up {
+      animation: fadeInUp 0.6s ease-out forwards;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .delay-100 {
+      animation-delay: 100ms;
+    }
+
+    .delay-200 {
+      animation-delay: 200ms;
+    }
+  </style>
+</head>
+
+<body
+  class="bg-[var(--light-gray)] text-[var(--estim-black)] font-sans antialiased selection:bg-[var(--estim-golden-pollen)] selection:text-[var(--estim-dark-walnut)]">
+  <ion-app>
+
+    <!-- ==================== MENU LATERAL ==================== -->
+    <ion-menu content-id="main-content" side="start" menu-id="first-menu">
+      <ion-header class="estim-header ion-no-border">
+        <div class="estim-hero">
+          <!-- <img src="/public/image.png" alt="Logo ESTIM" class="estim-logo" /> -->
+          <h2 class="text-3xl font-bold relative z-10 tracking-tight mt-0">
+            ESTIM
+          </h2>
+
+          <p class="text-[9pt] opacity-90 mt-1 relative z-10">
+            Ecole Supérieure de Technologie d'ingénieurie et de management
+          </p>
+          <div class="element-overlay"></div>
+          <div class="element-blur absolute inset-0 rounded-b-3xl"></div>
+        </div>
+      </ion-header>
+
+<ion-content class="pt-4">
+  <!-- Ajout de padding global pour respirer -->
+  <ion-list lines="none" class="estim-menu-list">
+    <ion-menu-toggle auto-hide="false">
+
+      <!-- Item Actif (exemple) -->
+      <ion-item button detail="false" class="menu-item" router-link="/">
+        <ion-icon slot="start" name="home-outline"></ion-icon>
+        <ion-label class="label-text">Accueil</ion-label>
+      </ion-item>
+
+      <!-- Item Standard -->
+      <ion-item button detail="false" class="menu-item" router-link="/plan">
+        <ion-icon slot="start" name="calendar-outline"></ion-icon>
+        <ion-label class="label-text">Emploi du temps</ion-label>
+      </ion-item>
+
+      <ion-item button detail="false" class="menu-item" router-link="/event">
+        <ion-icon slot="start" name="megaphone-outline"></ion-icon>
+        <ion-label class="label-text">Événements</ion-label>
+      </ion-item>
+
+      <ion-item button detail="false" class="menu-item" (click)="onClick()">
+        <ion-icon slot="start" name="library-outline"></ion-icon>
+        <ion-label class="label-text">Bibliothèque</ion-label>
+      </ion-item>
+
+      <ion-item button detail="false" class="menu-item">
+        <ion-icon slot="start" name="people-outline"></ion-icon>
+        <ion-label class="label-text">Partenaire</ion-label>
+      </ion-item>
+    </ion-menu-toggle>
+  </ion-list>
+
+  <div class="mt-auto pt-4">
+    <div class="help-card">
+      <p class="help-title">Besoin d'aide ?</p>
+      <p class="help-desc">Contactez le support</p>
+      <div class="copyright">
+        &copy; 2026 ESTIM App par Plamedi Ebana
+      </div>
+    </div>
+  </div>
+</ion-content>
+    </ion-menu>
+
+    <!-- ==================== CONTENU PRINCIPAL ==================== -->
+    <div class="ion-page" id="main-content">
+
+      <!-- Header Minimaliste -->
+      <ion-header class="ion-no-border">
+        <ion-toolbar class="bg-white/80 backdrop-blur-md border-b border-gray-100">
+          <ion-buttons slot="start" class="pl-2">
+            <ion-menu-button color="dark"></ion-menu-button>
+          </ion-buttons>
+          <ion-title class="text-lg font-bold text-estim-black tracking-wide">
+            ESTIM
+          </ion-title>
+          <ion-buttons slot="end" class="pr-2">
+            <ion-button color="dark" onclick="showNotifications()">
+              <ion-icon slot="icon-only" name="notifications-outline"></ion-icon>
+              <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+
+      <ion-content class="pb-32">
+        <div class="flex flex-col gap-6 p-4">
+
+          <!-- ========================================== -->
+          <!-- SLIDER HERO (Scroll Snap)                  -->
+          <!-- ========================================== -->
+          <div class="relative w-full fade-in-up">
+            <div id="hero-slider"
+              class="flex overflow-x-auto snap-x snap-mandatory gap-4 no-scrollbar scroll-smooth w-full pb-4">
+              <!-- Slide 1 (INCHANGÉ) -->
+              <div
+                class="snap-center shrink-0 w-[85vw] h-[220px] bg-gradient-to-br from-[#34a003] to-[#ffcf32] rounded-[2rem] relative overflow-hidden shadow-lg shadow-green-900/10 flex items-center select-none">
+                <div class="absolute right-0 top-0 w-48 h-48 bg-white opacity-10 rounded-full -mr-16 -mt-16 blur-2xl">
+                </div>
+
+                <div class="pl-6 z-10 text-white w-2/3">
+                  <h2 class="text-2xl font-bold leading-tight mb-1">
+                    Rentrée<br>2026
+                  </h2>
+                  <p class="text-sm opacity-90 mb-3 leading-relaxed">
+                    Toute l'info pour bien commencer l'année scolaire.
+                  </p>
+                  <ion-button class="btn-estim">
+                    En savoir plus
+                    <ion-icon slot="end" name="arrow-forward-outline"></ion-icon>
+                  </ion-button>
+                </div>
+
+                <div
+                  class="absolute -right-6 bottom-[-20px] w-40 h-40 bg-yellow-200 rounded-full mix-blend-overlay opacity-60 blur-md">
+                </div>
+              </div>
+
+              <!-- Slide 2 -->
+              <div
+                class="snap-center shrink-0 w-[85vw] h-[220px] bg-gradient-to-br from-[#432204ff] to-[#ffd036ff] rounded-[2rem] relative overflow-hidden shadow-lg shadow-green-900/10 flex items-center select-none">
+                <div class="absolute right-0 top-0 w-48 h-48 bg-white opacity-10 rounded-full -mr-16 -mt-16 blur-2xl">
+                </div>
+
+                <div class="pl-6 z-10 text-white w-2/3">
+                  <h2 class="text-2xl font-bold leading-tight mb-1">
+                    Campus<br>Digital
+                  </h2>
+                  <p class="text-sm opacity-90 mb-3 leading-relaxed">
+                    Cours, emplois du temps et services académiques réunis en un seul espace.
+                  </p>
+                  <ion-button class="btn-estim">
+                    Explorer <ion-icon slot="end" name="arrow-forward-outline"></ion-icon>
+                  </ion-button>
+                </div>
+
+                <div
+                  class="absolute -right-6 bottom-[-20px] w-40 h-40 bg-gray-200 rounded-full mix-blend-overlay opacity-60 blur-md">
+                </div>
+              </div>
+
+              <!-- Slide 3 -->
+              <div
+                class="snap-center shrink-0 w-[85vw] h-[220px] bg-gradient-to-br from-[#161616] to-[#4d4d4d] rounded-[2rem] relative overflow-hidden shadow-lg shadow-green-900/10 flex items-center select-none">
+                <div class="absolute right-0 top-0 w-48 h-48 bg-white opacity-10 rounded-full -mr-16 -mt-16 blur-2xl">
+                </div>
+
+                <div class="pl-6 z-10 text-white w-2/3">
+                  <h2 class="text-2xl font-bold leading-tight mb-1">
+                    Votre<br>Parcours
+                  </h2>
+                  <p class="text-sm opacity-90 mb-3 leading-relaxed">
+                    Suivez votre progression académique et restez connecté à l’essentiel.
+                  </p>
+                  <ion-button class="btn-estim">
+                    Accéder <ion-icon slot="end" name="arrow-forward-outline"></ion-icon>
+                  </ion-button>
+                </div>
+
+                <div
+                  class="absolute -right-6 bottom-[-20px] w-40 h-40 bg-white rounded-full mix-blend-overlay opacity-20 blur-md">
+                </div>
+              </div>
+            </div>
+
+            <!-- Indicateur dots -->
+            <div class="flex justify-center gap-1.5 mt-[-10px] relative z-10">
+              <div class="w-6 h-1.5 rounded-full bg-[var(--estim-green)] transition-all"></div>
+              <div class="w-1.5 h-1.5 rounded-full bg-gray-400 transition-all"></div>
+              <div class="w-1.5 h-1.5 rounded-full bg-gray-400 transition-all"></div>
+              <div class="w-1.5 h-1.5 rounded-full bg-gray-400 transition-all"></div>
+            </div>
+          </div>
+
+
+          <!-- ========================================== -->
+          <!-- RUBRIQUE CALENDRIER (Structure du croquis)  -->
+          <!-- ========================================== -->
+          <div id="schedule-card"
+            class="bg-white rounded-[2rem] p-6 shadow-soft border border-gray-100 flex flex-col relative overflow-hidden fade-in-up delay-100">
+            <!-- Fond décoratif subtil -->
+            <div
+              class="absolute top-0 right-0 w-32 h-32 bg-[var(--estim-soft-linen)]/40 rounded-bl-full -mr-8 -mt-8 transition-transform duration-700 hover:scale-110">
+            </div>
+
+            <!-- Header de la carte -->
+            <div class="flex justify-between items-start mb-6 relative z-10">
+              <div>
+                <h2 class="text-xl font-bold text-[var(--estim-black)] flex items-center gap-2">
+                  Calendrier
+                </h2>
+                <p class="text-xs text-gray-500 mt-1 max-w-[180px] leading-relaxed font-medium">
+                  Rester informé qu'importe le programme.
+                </p>
+              </div>
+
+            </div>
+
+            <!-- ILLUSTRATION PERSONNALISÉE SVG (Remplace le carré rose) -->
+            <div
+              class="w-full h-40 bg-stone-50 rounded-2xl flex items-center justify-center mb-6 relative overflow-hidden group cursor-pointer">
+              <!-- Pattern de fond -->
+              <div class="absolute inset-0 opacity-5"
+                style="background-image: radial-gradient(#432204 1px, transparent 1px); background-size: 10px 10px; color: black;">
+              </div>
+
+              <!-- Illustration Calendrier SVG -->
+              <video src="/public/calendar.mp4" autoplay muted loop></video>
+            </div>
+
+            <div class="w-full mt-auto">
+              <ion-button router-link="/plan" expand="block" fill="outline" color="dark"
+                class="!text-[var(--estim-dark-walnut)] !border-[var(--estim-dark-walnut)] !rounded-full !font-medium !h-11 !text-sm">
+                Emploi du temps
+              </ion-button>
+            </div>
+          </div>
+
+          <!-- ========================================== -->
+          <!-- RUBRIQUE ÉVÈNEMENTS (Structure du croquis)  -->
+          <!-- ========================================== -->
+          <div id="events-card"
+            class="bg-white rounded-[2rem] p-6 shadow-soft border border-gray-100 flex flex-col relative overflow-hidden fade-in-up delay-200">
+            <!-- Fond décoratif subtil -->
+            <div
+              class="absolute bottom-0 left-0 w-32 h-32 bg-[var(--estim-golden-pollen)]/20 rounded-tr-full -ml-8 -mb-8 transition-transform duration-700 hover:scale-110">
+            </div>
+
+            <div class="flex justify-between items-start mb-6 relative z-10">
+              <div>
+                <h2 class="text-xl font-bold text-[var(--estim-black)] flex items-center gap-2">
+                  Événement
+                </h2>
+                <p class="text-xs text-gray-500 mt-1 max-w-[180px] leading-relaxed font-medium">
+                  ESTIM vous informe et vous le fait vivre.
+                </p>
+              </div>
+            </div>
+
+            <!-- ILLUSTRATION PERSONNALISÉE SVG (Remplace le carré rose) -->
+            <div
+              class="w-full h-40 bg-stone-50 rounded-2xl flex items-center justify-center mb-6 relative overflow-hidden group cursor-pointer">
+              <!-- Pattern de fond -->
+              <div class="absolute inset-0 opacity-5"
+                style="background-image: radial-gradient(#ffd036 1px, transparent 1px); background-size: 10px 10px;">
+              </div>
+
+              <!-- Illustration Megaphone SVG -->
+              <video src="/public/event.mp4" loop muted autoplay></video>
+            </div>
+
+            <div class="w-full mt-auto">
+              <ion-button router-link="/event" expand="block" fill="outline" color="dark"
+                class="!text-[var(--estim-dark-walnut)] !border-[var(--estim-dark-walnut)] !rounded-full !font-medium !h-11 !text-sm">
+                Voir évènement
+              </ion-button>
+            </div>
+          </div>
+
+          <!-- Footer Spacer -->
+          <div class="h-16"></div>
+        </div>
+      </ion-content>
+
+      <!-- ==================== BOTTOM NAV (Floating Pill) ==================== -->
+      <div class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-full max-w-[320px] px-4 pointer-events-none">
+        <div class="bg-white/90 backdrop-blur-xl border border-white/60 shadow-2xl rounded-full flex justify-between items-center px-2 py-2 pointer-events-auto">
+
+          <!-- Home (Active) -->
+          <a href="/" class="nav-item flex flex-col items-center justify-center w-12 h-12 rounded-full text-(var(--estim-green)) hover:bg-gray-50 transition-colors active-nav" id="home-btn">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+          </a>
+
+          <!-- Events -->
+          <a href="/event" class="nav-item flex flex-col items-center justify-center w-12 h-12 rounded-full text-[var(--estim-gray)] hover:bg-gray-50 hover:text-[var(--estim-green)] transition-colors" id="events-btn">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+          </a>
+
+          <!-- Profile -->
+          <a href="/catg" class="nav-item flex flex-col items-center justify-center w-12 h-12 rounded-full text-[var(--estim-gray)] hover:bg-gray-50 hover:text-[var(--estim-green)] transition-colors" id="profile-btn">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+          </a>
+
+        </div>
+      </div>
+
+  </ion-app>
+
+  <script>
+    /* ==========================================================================
+       LOGIQUE & INTERACTIONS
+       ========================================================================== */
+
+    // Interaction simple sur les boutons "Default" (Feedback visuel)
+    document.querySelectorAll('button').forEach(btn => {
+      if (btn.innerText.includes('Default')) {
+        btn.addEventListener('click', () => {
+          window.presentToast('Action par défaut exécutée');
+        });
+      }
+    });
+
+    window.scrollToSection = function (id) {
+      const element = document.getElementById(id);
+      if (element) {
+        const offset = 80;
+        const bodyRect = document.body.getBoundingClientRect().top;
+        const elementRect = element.getBoundingClientRect().top;
+        const elementPosition = elementRect - bodyRect;
+        const offsetPosition = elementPosition - offset;
+        window.scrollTo({ top: offsetPosition, behavior: "smooth" });
+        const menu = document.querySelector('ion-menu');
+        if (menu) menu.close();
+      }
+    };
+
+    window.presentToast = async function (message) {
+      const toast = document.createElement('ion-toast');
+      toast.message = message;
+      toast.duration = 2000;
+      toast.position = 'bottom';
+      toast.color = 'dark';
+      toast.cssClass = 'toast-custom';
+      document.body.appendChild(toast);
+      await toast.present();
+    };
+
+    window.showNotifications = function () {
+      window.presentToast('Aucune nouvelle notification');
+    };
+
+    // Gestion simple du slider auto-scroll (Optionnel pour animation)
+    const slider = document.getElementById('hero-slider');
+    let isDown = false;
+    let startX;
+    let scrollLeft;
+
+    slider.addEventListener('mousedown', (e) => {
+      isDown = true;
+      slider.classList.add('active');
+      startX = e.pageX - slider.offsetLeft;
+      scrollLeft = slider.scrollLeft;
+    });
+    slider.addEventListener('mouseleave', () => {
+      isDown = false;
+      slider.classList.remove('active');
+    });
+    slider.addEventListener('mouseup', () => {
+      isDown = false;
+      slider.classList.remove('active');
+    });
+    slider.addEventListener('mousemove', (e) => {
+      if (!isDown) return;
+      e.preventDefault();
+      const x = e.pageX - slider.offsetLeft;
+      const walk = (x - startX) * 2;
+      slider.scrollLeft = scrollLeft - walk;
+    });
+
+    // Gestion de l'état actif pour la navigation inférieure
+    document.addEventListener('DOMContentLoaded', function () {
+      const navButtons = document.querySelectorAll('#home-btn, #events-btn, #calendar-btn, #catalogue-btn');
+
+      // Fonction pour retirer la classe active de tous les boutons
+      function removeActiveClass() {
+        navButtons.forEach(button => {
+          button.classList.remove('text-[var(--estim-green)]');
+          button.classList.add('text-gray-400');
+        });
+      }
+
+      // Ajouter un gestionnaire de clic à chaque bouton de navigation
+      navButtons.forEach(button => {
+        button.addEventListener('click', function () {
+          removeActiveClass();
+          this.classList.add('text-[var(--estim-green)]');
+          this.classList.remove('text-gray-400');
+        });
+      });
+
+      // Par défaut, le bouton d'accueil est actif
+      const homeBtn = document.getElementById('home-btn');
+      if (homeBtn) {
+        homeBtn.classList.add('text-[var(--estim-green)]');
+        homeBtn.classList.remove('text-gray-400');
+      }
+    });
+
+  </script>
+
+</body>
+
+</html>
