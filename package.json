@@ -13,6 +13,8 @@
     "cap:web": "cap open web"
   },
   "devDependencies": {
+    "@ionic/react-router": "^8.7.17",
+    "@vitejs/plugin-legacy": "^7.2.1",
     "autoprefixer": "^10.4.23",
     "connect": "^3.7.0",
     "postcss": "^8.5.6",

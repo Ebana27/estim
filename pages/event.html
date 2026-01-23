@@ -1,230 +1,41 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>ESTIM - Événements</title>
-
-  <!-- Ionic Framework (Styles & Icons) -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ionic/core/css/ionic.bundle.css" />
-  <script type="module" src="https://cdn.jsdelivr.net/npm/@ionic/core/dist/ionic/ionic.esm.js"></script>
-
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            estim: {
-              green: '#117a2aff',
-              black: '#000100ff',
-              walnut: '#432204ff',
-              gold: '#ffd036ff',
-              linen: '#d6dacbff',
-              gray: '#6c757dff'
-            }
-          },
-          fontFamily: { sans: ['Poppins', 'sans-serif'] }
-        }
-      }
-    }
-  </script>
-
-  <style>
-    /* Utilitaires */
-    .no-scrollbar::-webkit-scrollbar { display: none; }
-    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-    .fade-in { animation: fadeIn 0.5s ease-out; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Événements</title>
+    <link rel="stylesheet" href="../src/css/style.css">
+    <!-- Ne pas oublier d'inclure Ionic JS/CSS si ce n'est pas fait dans votre index.html principal -->
 </head>
-
-<body class="bg-gray-50 text-estim-black font-sans antialiased pb-24">
-  <ion-app>
-
-    <!-- HEADER -->
-    <ion-header class="ion-no-border">
-      <ion-toolbar class="bg-white/90 backdrop-blur-md border-b border-gray-100">
-        <ion-buttons slot="start" class="pl-2">
-          <ion-back-button default-href="/" color="dark"></ion-back-button>
-        </ion-buttons>
-        <ion-title class="text-lg font-bold text-estim-black tracking-wide">
-          Evénements
-        </ion-title>
-        <ion-buttons slot="end">
-          <ion-button color="dark">
-            <ion-icon slot="icon-only" name="search-outline"></ion-icon>
-          </ion-button>
-        </ion-buttons>
-      </ion-toolbar>
-    </ion-header>
-
-    <!-- CONTENU -->
-    <ion-content>
-      <div class="p-4 space-y-6 fade-in">
-
-        <!-- HERO SECTION (Simplifiée) -->
-        <div class="bg-gradient-to-br from-estim-green to-emerald-900 rounded-2xl p-6 text-white shadow-lg relative overflow-hidden">
-          <!-- Cercle décoratif en CSS -->
-          <div class="absolute top-0 right-0 w-32 h-32 bg-white opacity-10 rounded-full -mr-10 -mt-10 blur-xl"></div>
-          
-          <div class="relative z-10">
-            <span class="bg-estim-gold text-estim-walnut text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">Campus Life</span>
-            <h2 class="text-xl font-bold mt-2 leading-tight">Vivez l'expérience ESTIM</h2>
-            <p class="text-white/80 text-sm mt-1 max-w-[80%]">Ne ratez aucun moment fort de la vie étudiante.</p>
-            
-            <div class="mt-4 flex items-center gap-3">
-               <div class="bg-white/20 p-2 rounded-lg">
-                 <ion-icon name="calendar-outline" class="text-xl text-estim-gold"></ion-icon>
-               </div>
-               <div class="text-xs font-medium">
-                 <div class="opacity-80">Prochain événement</div>
-                 <div class="font-bold">Portes Ouvertes</div>
-               </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- FILTRES -->
-        <div class="flex gap-2 overflow-x-auto no-scrollbar py-1">
-          <button class="px-4 py-1.5 rounded-full bg-estim-green text-white text-xs font-bold shadow-md whitespace-nowrap">Tous</button>
-          <button class="px-4 py-1.5 rounded-full bg-white text-estim-walnut border border-gray-200 text-xs font-medium whitespace-nowrap">Académique</button>
-          <button class="px-4 py-1.5 rounded-full bg-white text-estim-walnut border border-gray-200 text-xs font-medium whitespace-nowrap">Sport</button>
-          <button class="px-4 py-1.5 rounded-full bg-white text-estim-walnut border border-gray-200 text-xs font-medium whitespace-nowrap">Culture</button>
-        </div>
-
-        <!-- LISTE DES ÉVÉNEMENTS -->
+<body>
+    <style>
+        /* À EVITER dans #events-container ou main */
+#events-container {
+    height: auto;
+    overflow: hidden;
+    position: fixed;
+}
+    </style>
+    <ion-app>
+        <!-- Utiliser ion-header permet de gérer la position automatiquement au dessus du content -->
+      <ion-header class="ion-no-border">
+        <ion-toolbar class="bg-white/80 backdrop-blur-md border-b border-gray-100">
+          <ion-buttons slot="start" class="pl-2">
+            <ion-menu-button color="dark"></ion-menu-button>
+          </ion-buttons>
+          <ion-title class="text-lg font-bold text-estim-black tracking-wide">
+            Evénements
+          </ion-title>
+        </ion-toolbar>
+      </ion-header>
         
-        <!-- Carte 1 -->
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden group">
-          <div class="relative h-36">
-            <img src="https://picsum.photos/seed/estim1/600/300" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Event">
-            <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
-            
-            <div class="absolute top-3 left-3 bg-white/90 backdrop-blur px-2 py-1 rounded-lg text-center min-w-[45px] shadow-sm">
-              <span class="block text-[10px] font-bold text-estim-green uppercase">Nov</span>
-              <span class="block text-lg font-bold text-estim-black leading-none">12</span>
-            </div>
-            <div class="absolute top-3 right-3 bg-estim-gold text-estim-walnut text-[9px] font-bold px-2 py-0.5 rounded-full uppercase">Conférence</div>
-          </div>
-          
-          <div class="p-4">
-            <h3 class="font-bold text-estim-black mb-1">Journée Portes Ouvertes</h3>
-            <div class="flex items-center text-[10px] text-gray-500 mb-3 gap-2">
-              <span class="flex items-center gap-1"><ion-icon name="time-outline"></ion-icon> 09:00</span>
-              <span class="w-1 h-1 bg-gray-300 rounded-full"></span>
-              <span class="flex items-center gap-1"><ion-icon name="location-outline"></ion-icon> Amphi A</span>
-            </div>
-            <div class="flex justify-between items-center mt-3">
-              <div class="flex -space-x-1">
-                 <div class="w-6 h-6 rounded-full border border-white bg-gray-300"></div>
-                 <div class="w-6 h-6 rounded-full border border-white bg-gray-400"></div>
-                 <div class="w-6 h-6 rounded-full border border-white bg-estim-linen flex items-center justify-center text-[8px] font-bold text-estim-walnut">+42</div>
-              </div>
-              <button class="bg-estim-green text-white text-[10px] font-bold px-3 py-1.5 rounded-lg hover:opacity-90 transition action-btn">S'inscrire</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Carte 2 -->
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden group">
-          <div class="relative h-36">
-            <img src="https://picsum.photos/seed/estim2/600/300" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Event">
-            <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
-            
-            <div class="absolute top-3 left-3 bg-white/90 backdrop-blur px-2 py-1 rounded-lg text-center min-w-[45px] shadow-sm">
-              <span class="block text-[10px] font-bold text-estim-green uppercase">Nov</span>
-              <span class="block text-lg font-bold text-estim-black leading-none">15</span>
-            </div>
-            <div class="absolute top-3 right-3 bg-purple-100 text-purple-700 text-[9px] font-bold px-2 py-0.5 rounded-full uppercase">Hackathon</div>
-          </div>
-          
-          <div class="p-4">
-            <h3 class="font-bold text-estim-black mb-1">ESTIM Code Challenge</h3>
-            <div class="flex items-center text-[10px] text-gray-500 mb-3 gap-2">
-              <span class="flex items-center gap-1"><ion-icon name="time-outline"></ion-icon> 14:00</span>
-              <span class="w-1 h-1 bg-gray-300 rounded-full"></span>
-              <span class="flex items-center gap-1"><ion-icon name="desktop-outline"></ion-icon> Labo Info</span>
-            </div>
-            <div class="flex justify-between items-center mt-3">
-              <div class="flex -space-x-1">
-                 <div class="w-6 h-6 rounded-full border border-white bg-gray-300"></div>
-                 <div class="w-6 h-6 rounded-full border border-white bg-estim-linen flex items-center justify-center text-[8px] font-bold text-estim-walnut">+12</div>
-              </div>
-              <button class="bg-estim-walnut text-white text-[10px] font-bold px-3 py-1.5 rounded-lg hover:opacity-90 transition">Détails</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Carte 3 (Passé) -->
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden opacity-75">
-          <div class="relative h-36 grayscale">
-            <img src="https://picsum.photos/seed/estim3/600/300" class="w-full h-full object-cover" alt="Event">
-            <div class="absolute inset-0 bg-black/10"></div>
-            <div class="absolute inset-0 flex items-center justify-center">
-              <span class="bg-white/80 backdrop-blur text-estim-black text-[10px] font-bold px-3 py-1 rounded-full border border-white">Passé</span>
-            </div>
-          </div>
-          <div class="p-4">
-            <h3 class="font-bold text-gray-500 mb-1">Soirée d'intégration</h3>
-            <div class="flex justify-end mt-2">
-               <button class="text-estim-green text-[10px] font-bold underline">Voir photos</button>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </ion-content>
-
-    <!-- BOTTOM NAV -->
-    <div class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[320px] pointer-events-none">
-      <div class="bg-white/90 backdrop-blur-xl border border-white/60 shadow-2xl rounded-full flex justify-between items-center px-4 py-2 pointer-events-auto">
-        
-        <!-- Home -->
-        <a href="/" class="p-2 rounded-full text-gray-400 hover:text-estim-green hover:bg-gray-50 transition">
-          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-        </a>
-
-        <!-- Events (Actif) -->
-        <a href="/event" class="p-2 rounded-full text-estim-green bg-green-50/50 transition">
-          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
-        </a>
-
-        <!-- Profile -->
-        <a href="/catg" class="p-2 rounded-full text-gray-400 hover:text-estim-green hover:bg-gray-50 transition">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
-        </a>
-
-      </div>
-    </div>
-
-  </ion-app>
-
-  <script>
-    // Gestion simple des boutons "S'inscrire"
-    document.querySelectorAll('.action-btn').forEach(btn => {
-      btn.addEventListener('click', function() {
-        if(this.innerText.includes("S'inscrire")) {
-          // Feedback visuel Toast Ionic
-          const toast = document.createElement('ion-toast');
-          toast.message = "Inscription confirmée !";
-          toast.duration = 2000;
-          toast.color = 'success';
-          toast.position = 'bottom';
-          document.body.appendChild(toast);
-          toast.present();
-
-          // Changement d'état du bouton
-          this.innerText = "Inscrit";
-          this.classList.replace('bg-estim-green', 'bg-gray-400');
-          this.classList.replace('text-white', 'text-gray-100');
-        }
-      });
-    });
-  </script>
+        <!-- C'est ici que la magie opère : ion-content gère le scroll -->
+        <ion-content>
+            <main id="events-container">
+                <!-- Les cartes seront injectées ici par le JS -->
+            </main>
+        </ion-content>
+    </ion-app>
+    
 </body>
 </html>

@@ -1,8 +1,9 @@
-import { defineConfig } from 'vite'
-import tailwindcss from '@tailwindcss/vite'
-import { viteStaticCopy } from 'vite-plugin-static-copy'
+import { defineConfig } from "vite";
+import tailwindcss from "@tailwindcss/vite";
+import { viteStaticCopy } from "vite-plugin-static-copy";
 
 export default defineConfig({
+  base: "./",
   plugins: [
     tailwindcss(),
 
@@ -10,41 +11,57 @@ export default defineConfig({
     viteStaticCopy({
       targets: [
         {
-          src: 'pages/**/*',
-          dest: 'pages'
+          src: "pages/**/*",
+          dest: "pages",
+        },
+        {
+          src: "vid/**/*",
+          dest: "vid",
+        },
+        {
+          src: "components/**/*",
+          dest: "components",
+        },
+        {
+          src: "data/**/*",
+          dest: "data",
+        },
+        {
+          src: "version.json",
+          dest: "",
         }
-      ]
-    })
+      ],
+    }),
   ],
 
-  publicDir: 'public', // ✔️ UN SEUL dossier
+  publicDir: "public", // ✔️ UN SEUL dossier
 
   build: {
-    target: 'es2020',
-    outDir: 'dist',
+    target: "es2020",
+    outDir: "dist",
     emptyOutDir: true,
 
     rollupOptions: {
       output: {
         manualChunks: {
-          'ionic-core': ['@ionic/core'],
+          "ionic-core": ["@ionic/core"],
         },
         assetFileNames: (assetInfo) => {
-          let extType = assetInfo.name?.split('.').at(1)
-          if (/png|jpe?g|svg|gif|ico/i.test(extType || '')) {
-            extType = 'img'
-          } else if (/woff|woff2|ttf|eot/i.test(extType || '')) {
-            extType = 'fonts'
+          let extType = assetInfo.name?.split(".").at(1);
+          if (/png|jpe?g|svg|gif|ico/i.test(extType || "")) {
+            extType = "img";
+          } else if (/woff|woff2|ttf|eot/i.test(extType || "")) {
+            extType = "fonts";
           }
-          return `${extType}/[name]-[hash][extname]`
-        }
-      }
-    }
+          return `${extType}/[name]-[hash][extname]`;
+        },
+      },
+    },
   },
 
   server: {
     open: true,
     host: true,
-    port: 55500
-  }
-})
+    port: 3000,
+  },
+});
