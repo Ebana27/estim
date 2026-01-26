@@ -1,239 +1,256 @@
-// Fonction pour charger les données des événements
-async function loadEvents() {
-    try {
-        // Utiliser le chemin absolu depuis la racine du serveur
-        const response = await fetch('/data/events.json');
-
-        if (!response.ok) {
-            throw new Error(`Erreur lors du chargement des données: ${response.status}`);
-        }
-
-        const events = await response.json();
-        displayEvents(events);
-    } catch (error) {
-        console.error('Erreur lors du chargement des événements:', error);
-        const container = document.getElementById('events-container');
-        if (container) {
-            container.innerHTML = '<p style="color: #d41159; text-align: center; padding: 2rem;">Erreur lors du chargement des événements.</p>';
-        }
-    }
-}
-
-// Tableau d'images de placeholder pour les événements
-const eventImages = [
-    'https://images.unsplash.com/photo-1552664730-d307ca884978?w=500&h=500&fit=crop',
-    'https://images.unsplash.com/photo-1540575467063-178f50002275?w=500&h=500&fit=crop',
-    'https://images.unsplash.com/photo-1517457373614-b7152f800fd1?w=500&h=500&fit=crop'
+// Données mixtes : Événements et Annonces officielles
+const announcements = [
+  {
+    id: 1,
+    title: "Concert Rock",
+    location: "Stade de France",
+    date: "18 Mars 2024",
+    day: "MAR",
+    dayNum: 18,
+    price: "€45",
+    participants: "1.2k participants",
+    type: "Concert",
+    gradient: "from-orange-400 to-red-500",
+    description: "Une soirée explosive avec les plus grands groupes de rock français et internationaux.",
+    isFeatured: false
+  },
+  {
+    id: 2,
+    title: "Exposition d'Art",
+    location: "Musée d'Orsay",
+    date: "22 Mars 2024",
+    day: "MAR",
+    dayNum: 22,
+    price: "€20",
+    participants: "850 participants",
+    type: "Art",
+    gradient: "from-green-400 to-blue-500",
+    description: "Découvrez une collection inédite d'œuvres impressionnistes.",
+    isFeatured: false
+  },
+  {
+    id: 3,
+    title: "Festival Gastronomique",
+    location: "Place Vendôme",
+    date: "25 Mars 2024",
+    day: "MAR",
+    dayNum: 25,
+    price: "€35",
+    participants: "2.1k participants",
+    type: "Food",
+    gradient: "from-purple-400 to-pink-500",
+    description: "Dégustation de produits du terroir et démonstrations de chefs étoilés.",
+    isFeatured: false
+  },
+  {
+    id: 4,
+    title: "Absence Prof. Martin",
+    location: "Salle A204",
+    date: "26 Mars 2024",
+    day: "MAR",
+    dayNum: 26,
+    price: null,
+    participants: null,
+    type: "Annonce",
+    gradient: "from-gray-500 to-gray-600", // Gris pour annonce officielle
+    description: "Le cours d'algorithmique est annulé. Veuillez consulter la liste des rattrapages ci-jointe.",
+    fileUrl: "/pdf/absence_martin.pdf", // Simulation fichier téléchargeable
+    isFeatured: false
+  }
 ];
 
-// Fonction pour afficher les événements dans la page
-function displayEvents(events) {
-    const container = document.getElementById('events-container');
+const featuredData = {
+    title: "Festival de Jazz",
+    location: "Paris",
+    date: "15 Mars 2024",
+    description: "Concert exceptionnel avec les plus grands artistes internationaux. Préparez-vous pour trois jours de musique pure au cœur de la capitale.",
+    image: "https://images.unsplash.com/photo-1415201364774-f6f0bb35f28f?auto=format&fit=crop&w=800&q=80"
+};
 
-    if (!container) {
-        console.error('Conteneur events-container introuvable');
-        return;
-    }
+// --- INITIALISATION ---
+export function initEventPage() {
+    renderEventsList(announcements);
+}
 
-    // Vider le conteneur
+// --- RENDU DE LA LISTE ---
+function renderEventsList(events) {
+    const container = document.getElementById('events-list-container');
+    if (!container) return;
     container.innerHTML = '';
 
-    // Créer le contenu HTML pour chaque événement
-    events.forEach((event, index) => {
-        const eventElement = document.createElement('div');
-        eventElement.className = 'event-card';
+    events.forEach(event => {
+        const card = document.createElement('div');
+        card.className = "estim-event-card w-full h-28 overflow-hidden relative cursor-pointer transition-transform active:scale-[0.98]";
 
-        // Ajouter un gestionnaire de clic pour ouvrir la modal
-        const eventId = `event-${event.id || index}`;
-        const imageUrl = eventImages[index % eventImages.length];
+        // Layout basé sur le prototype
+        card.innerHTML = `
+            <div class="flex h-full w-full">
+                <!-- Bloc Date (Gauche) -->
+                <div class="w-20 h-28 bg-gradient-to-br ${event.gradient} flex flex-col justify-center items-center shrink-0 text-white">
+                    <span class="text-xs font-medium mb-1">${event.day}</span>
+                    <span class="text-xl font-bold">${event.dayNum}</span>
+                </div>
 
-        eventElement.innerHTML = `
-            <div id="${eventId}" class="event-card-image" style="background-image: url('${imageUrl}'); cursor: pointer;" onclick="openEventModal(${JSON.stringify(event).replace(/"/g, '&quot;')})"></div>
-            <div class="event-card-content">
-                <h2 class="event-card-title" onclick="openEventModal(${JSON.stringify(event).replace(/"/g, '&quot;')})" style="cursor: pointer;">${event.title}</h2>
-                <div class="event-card-meta">
-                    <div class="event-meta-item">
-                        <ion-icon name="calendar-outline"></ion-icon>
-                        <span>${event.date}</span>
+                <!-- Contenu (Droite) -->
+                <div class="flex-1 p-4 flex flex-col justify-between relative">
+                    <!-- Titre & Lieu -->
+                    <div>
+                        <h4 class="text-base font-semibold text-gray-900 mb-1 leading-tight">${event.title}</h4>
+                        <p class="text-sm text-gray-600 leading-tight">${event.location}</p>
                     </div>
-                    <div class="event-meta-item">
-                        <ion-icon name="location-outline"></ion-icon>
-                        <span>${event.location}</span>
+
+                    <!-- Prix / Participants / Badge -->
+                    <div class="flex justify-between items-center mt-2">
+                        ${event.price ? `
+                            <span class="text-indigo-500 font-semibold text-base">${event.price}</span>
+                        ` : '<span class="text-xs font-bold text-red-500 bg-red-50 px-2 py-0.5 rounded">ANNULÉ</span>'}
+
+                        ${event.participants ? `
+                            <div class="flex items-center text-xs text-gray-500">
+                                <ion-icon name="people-outline" class="text-gray-400 text-xs mr-1"></ion-icon>
+                                ${event.participants}
+                            </div>
+                        ` : ''}
                     </div>
                 </div>
-                <p class="event-card-description">${event.description}</p>
-                <button class="event-card-btn" onclick="openEventModal(${JSON.stringify(event).replace(/"/g, '&quot;')})">En savoir plus</button>
+
+                <!-- Bouton Cœur (Droite absolue) -->
+                <div class="absolute right-4 top-1/2 -translate-y-1/2">
+                    <ion-icon name="heart-outline" class="text-gray-300 text-xl hover:text-red-400 transition-colors"></ion-icon>
+                </div>
             </div>
         `;
 
-        container.appendChild(eventElement);
+        // Gestionnaire de clic pour ouvrir la modal
+        card.onclick = () => openEventModal(event);
+
+        container.appendChild(card);
     });
 }
 
-// Fonction pour ouvrir la modal avec les détails complets de l'événement
+// --- GESTION DES FILTRES (Visuel) ---
+window.filterEvents = function(category) {
+    // Mettre à jour l'état visuel des boutons
+    const buttons = document.querySelectorAll('.estim-chip');
+    buttons.forEach(btn => {
+        const text = btn.innerText.trim();
+        if (text === category) {
+            btn.className = "estim-chip estim-chip-active flex items-center gap-2 px-4";
+        } else {
+            btn.className = "estim-chip estim-chip-inactive flex items-center gap-2 px-4";
+        }
+    });
+
+    // Filtrage simple (logique à adapter selon vos besoins)
+    if (category === 'Populaires') {
+        renderEventsList(announcements); // Affiche tout
+    } else {
+        const filtered = announcements.filter(e => e.type === category);
+        renderEventsList(filtered);
+    }
+};
+
+// --- MODALE VEDETTE (Spécifique) ---
+window.openFeaturedModal = function() {
+    createAndPresentModal({
+        ...featuredData,
+        isFeatured: true,
+        price: "€120",
+        actionType: "book" // Bouton Réserver
+    });
+};
+
+// --- MODALE GÉNÉRIQUE ---
 window.openEventModal = function(event) {
-    // Créer la modal
+    createAndPresentModal({
+        ...event,
+        actionType: event.fileUrl ? "download" : "book" // Télécharger PDF si fichier existe
+    });
+};
+
+function createAndPresentModal(event) {
     const modal = document.createElement('ion-modal');
-    modal.cssClass = 'full-screen-modal';
+    modal.initialBreakpoint = 0.75;
+    modal.breakpoints = [0, 0.75, 1];
     modal.component = 'event-detail-component';
     modal.swipeToClose = true;
+    modal.componentProps = { event }; // Passer les données au composant
 
-    // Définir le composant pour les détails de l'événement
     if (!customElements.get('event-detail-component')) {
         customElements.define('event-detail-component', class extends HTMLElement {
             connectedCallback() {
-                const imageUrl = eventImages[Math.floor(Math.random() * eventImages.length)];
+                const event = this.componentProps?.event || {};
+
+                // Bouton d'action conditionnel
+                let actionButtonHTML = '';
+                if (event.fileUrl) {
+                    // Annonce / Fichier PDF
+                    actionButtonHTML = `
+                        <ion-button href="${event.fileUrl}" download class="w-full h-12 mt-6 font-semibold" color="dark">
+                            <ion-icon slot="start" name="download-outline"></ion-icon>
+                            Télécharger le document
+                        </ion-button>
+                    `;
+                } else if (event.price) {
+                    // Événement payant / Réserver
+                    actionButtonHTML = `
+                        <ion-button class="w-full h-12 mt-6 font-semibold" style="--background: #4f46e5">
+                            Réserver ma place
+                        </ion-button>
+                    `;
+                } else {
+                    // Simple participation
+                    actionButtonHTML = `
+                        <ion-button class="w-full h-12 mt-6 font-semibold" style="--background: #4f46e5">
+                            Participer
+                        </ion-button>
+                    `;
+                }
 
                 this.innerHTML = `
-                    <ion-header>
-                        <ion-toolbar color="light">
-                            <ion-title>Détails de l'événement</ion-title>
+                    <ion-header class="ion-no-border">
+                        <ion-toolbar style="--background: transparent; --border-width: 0;">
                             <ion-buttons slot="end">
-                                <ion-button onclick="document.querySelector('ion-modal').dismiss()">
-                                    <ion-icon name="close"></ion-icon>
+                                <ion-button onclick="dismissModal()">
+                                    <ion-icon name="close-circle" style="font-size: 32px; color: #374151;"></ion-icon>
                                 </ion-button>
                             </ion-buttons>
                         </ion-toolbar>
                     </ion-header>
-                    <ion-content class="ion-padding">
-                        <div class="event-detail-container">
-                            <div class="event-detail-image" style="background-image: url('${imageUrl}'); height: 200px; background-size: cover; background-position: center; border-radius: 12px; margin-bottom: 20px;"></div>
-
-                            <div class="event-detail-card">
-                                <h2 class="event-detail-title">${event.title || 'Événement sans titre'}</h2>
-
-                                <div class="event-detail-info">
-                                    <div class="info-row">
-                                        <ion-icon name="calendar-outline" class="info-icon"></ion-icon>
-                                        <div>
-                                            <div class="label">Date</div>
-                                            <div class="value">${event.date || 'Non spécifiée'}</div>
-                                        </div>
-                                    </div>
-
-                                    <div class="info-row">
-                                        <ion-icon name="location-outline" class="info-icon"></ion-icon>
-                                        <div>
-                                            <div class="label">Lieu</div>
-                                            <div class="value">${event.location || 'Non spécifié'}</div>
-                                        </div>
-                                    </div>
-
-                                    <div class="info-row full-width">
-                                        <ion-icon name="information-circle-outline" class="info-icon"></ion-icon>
-                                        <div>
-                                            <div class="label">Description</div>
-                                            <div class="value">${event.description || 'Aucune description disponible'}</div>
-                                        </div>
-                                    </div>
-
-                                    ${event.organizer ? `
-                                    <div class="info-row">
-                                        <ion-icon name="people-outline" class="info-icon"></ion-icon>
-                                        <div>
-                                            <div class="label">Organisateur</div>
-                                            <div class="value">${event.organizer}</div>
-                                        </div>
-                                    </div>
-                                    ` : ''}
-
-                                    ${event.category ? `
-                                    <div class="info-row">
-                                        <ion-icon name="pricetag-outline" class="info-icon"></ion-icon>
-                                        <div>
-                                            <div class="label">Catégorie</div>
-                                            <div class="value">${event.category}</div>
-                                        </div>
-                                    </div>
-                                    ` : ''}
-
-                                    ${event.price ? `
-                                    <div class="info-row">
-                                        <ion-icon name="cash-outline" class="info-icon"></ion-icon>
-                                        <div>
-                                            <div class="label">Prix</div>
-                                            <div class="value">${event.price}</div>
-                                        </div>
-                                    </div>
-                                    ` : ''}
-                                </div>
-                            </div>
+                    <ion-content class="ion-padding bg-white">
+                        <div class="h-48 rounded-2xl bg-gradient-to-br ${event.gradient || 'from-indigo-500 to-purple-500'} mb-6 flex items-center justify-center text-white shadow-lg">
+                            ${event.isFeatured
+                                ? '<h1 class="text-3xl font-bold drop-shadow-md">🎷 Jazz</h1>'
+                                : `<span class="text-6xl font-bold opacity-50">${event.dayNum || 'XX'}</span>`
+                            }
                         </div>
+
+                        <h1 class="text-2xl font-bold text-gray-900 mb-2 font-inter">${event.title}</h1>
+
+                        <div class="flex items-center gap-2 text-gray-500 mb-4 text-sm font-inter">
+                            <ion-icon name="calendar-outline"></ion-icon>
+                            <span>${event.date}</span>
+                            <span class="mx-1">•</span>
+                            <ion-icon name="location-outline"></ion-icon>
+                            <span>${event.location}</span>
+                        </div>
+
+                        <div class="text-gray-600 leading-relaxed text-sm font-inter mb-6">
+                            ${event.description}
+                        </div>
+
+                        ${actionButtonHTML}
                     </ion-content>
-
-                    <style>
-                        .event-detail-container {
-                            padding: 20px 0;
-                        }
-
-                        .event-detail-card {
-                            background: white;
-                            border-radius: 16px;
-                            padding: 24px;
-                            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-                        }
-
-                        .event-detail-title {
-                            font-size: 24px;
-                            font-weight: bold;
-                            color: #1f2937;
-                            margin-bottom: 20px;
-                        }
-
-                        .event-detail-info {
-                            display: grid;
-                            grid-template-columns: 1fr 1fr;
-                            gap: 20px;
-                        }
-
-                        .info-row {
-                            display: flex;
-                            align-items: flex-start;
-                            gap: 12px;
-                        }
-
-                        .info-row.full-width {
-                            grid-column: 1 / -1;
-                        }
-
-                        .info-icon {
-                            color: #6b7280;
-                            font-size: 18px;
-                            margin-top: 2px;
-                        }
-
-                        .label {
-                            font-size: 12px;
-                            color: #6b7280;
-                            text-transform: uppercase;
-                            letter-spacing: 0.5px;
-                            margin-bottom: 4px;
-                        }
-
-                        .value {
-                            font-weight: 500;
-                            color: #1f2937;
-                        }
-
-                        .full-screen-modal {
-                            --height: 100%;
-                            --width: 100%;
-                            --border-radius: 0;
-                        }
-                    </style>
                 `;
             }
         });
     }
 
-    // Ajouter la modal au corps du document et l'afficher
+    // Fonction locale pour fermer la modale
+    window.dismissModal = function() {
+        modal.dismiss();
+    };
+
     document.body.appendChild(modal);
     modal.present();
-};
-
-// Exporter la fonction d'initialisation pour main.js
-export function initEventPage() {
-    console.log('Initialisation de la page événement');
-    // Charger les événements après que le HTML soit injecté
-    loadEvents();
 }

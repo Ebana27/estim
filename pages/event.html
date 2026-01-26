@@ -3,39 +3,92 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Événements</title>
+    <title>Annonces</title>
     <link rel="stylesheet" href="../src/css/style.css">
-    <!-- Ne pas oublier d'inclure Ionic JS/CSS si ce n'est pas fait dans votre index.html principal -->
 </head>
-<body>
-    <style>
-        /* À EVITER dans #events-container ou main */
-#events-container {
-    height: auto;
-    overflow: hidden;
-    position: fixed;
-}
-    </style>
+<body class="estim-announces-page text-gray-900">
     <ion-app>
-        <!-- Utiliser ion-header permet de gérer la position automatiquement au dessus du content -->
-      <ion-header class="ion-no-border">
-        <ion-toolbar class="bg-white/80 backdrop-blur-md border-b border-gray-100">
-          <ion-buttons slot="start" class="pl-2">
-            <ion-menu-button color="dark"></ion-menu-button>
-          </ion-buttons>
-          <ion-title class="text-lg font-bold text-estim-black tracking-wide">
-            Evénements
-          </ion-title>
-        </ion-toolbar>
-      </ion-header>
-        
-        <!-- C'est ici que la magie opère : ion-content gère le scroll -->
-        <ion-content>
-            <main id="events-container">
-                <!-- Les cartes seront injectées ici par le JS -->
-            </main>
-        </ion-content>
+        <div class="ion-page">
+            <!-- HEADER & RECHERCHE (Sticky) -->
+            <ion-header class="ion-no-border">
+                <!-- Zone blanche en haut -->
+                <div class="bg-white border-b border-gray-100">
+                    <!-- Barre de recherche -->
+                    <div class="px-4 pt-4 pb-2">
+                        <div class="estim-search-bar w-full flex items-center px-4 relative">
+                            <ion-icon name="search-outline" class="text-gray-400 text-lg"></ion-icon>
+                            <input type="text" placeholder="Rechercher des annonces..." class="bg-transparent ml-3 w-full text-base font-normal text-black placeholder-gray-400 outline-none font-inter">
+                        </div>
+                    </div>
+
+                    <!-- FILTRES (Chips) -->
+                    <div class="px-4 pb-3 overflow-x-auto no-scrollbar flex gap-2">
+                        <button class="estim-chip estim-chip-active flex items-center gap-2 px-4" onclick="filterEvents('Populaires')">
+                            <span>Populaires</span>
+                        </button>
+                        <button class="estim-chip estim-chip-inactive flex items-center gap-2 px-4" onclick="filterEvents('Musique')">
+                            <span>Musique</span>
+                        </button>
+                        <button class="estim-chip estim-chip-inactive flex items-center gap-2 px-4" onclick="filterEvents('Food')">
+                            <span>Food</span>
+                        </button>
+                        <button class="estim-chip estim-chip-inactive flex items-center gap-2 px-4" onclick="filterEvents('Art')">
+                            <span>Art</span>
+                        </button>
+                    </div>
+                </div>
+            </ion-header>
+
+            <!-- CONTENU PRINCIPAL -->
+            <ion-content class="pb-24">
+
+                <!-- CARTE VEDETTE (Featured) -->
+                <div class="px-4 mt-4">
+                    <div class="estim-featured-card relative overflow-hidden p-6 shadow-lg cursor-pointer" onclick="openFeaturedModal()">
+                        <!-- Décoration -->
+                        <div class="absolute top-[-32px] right-8 w-32 h-32 bg-white/10 rounded-full blur-xl"></div>
+                        <div class="absolute bottom-[80px] right-8 w-24 h-24 bg-white/5 rounded-full blur-lg"></div>
+
+                        <div class="relative z-10 w-full">
+                            <span class="text-sm font-medium text-white mb-1 block">Annonce vedette</span>
+                            <h2 class="text-2xl font-bold leading-8 mb-2">Festival de Jazz</h2>
+                            <p class="text-base font-normal text-white/90 leading-6 mb-6 line-clamp-2">
+                                Concert exceptionnel avec les plus grands artistes internationaux
+                            </p>
+
+                            <div class="flex items-center gap-6 mb-6">
+                                <div class="flex items-center gap-2 text-sm font-normal text-white">
+                                    <ion-icon name="calendar-outline"></ion-icon>
+                                    <span>15 Mars 2024</span>
+                                </div>
+                                <div class="flex items-center gap-2 text-sm font-normal text-white">
+                                    <ion-icon name="location-outline"></ion-icon>
+                                    <span>Paris</span>
+                                </div>
+                            </div>
+
+                            <button class="bg-white text-purple-600 text-sm font-semibold py-2.5 px-6 rounded-xl shadow-sm hover:bg-gray-50 transition">
+                                Réserver maintenant
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- LISTE DES PROCHAINES ANNONCES -->
+                <div class="px-4 mt-8">
+                    <div class="flex justify-between items-end mb-4">
+                        <h3 class="text-lg font-semibold text-gray-900">Prochaines annonces</h3>
+                        <a href="#" class="text-sm font-medium text-indigo-500">Voir tout</a>
+                    </div>
+
+                    <!-- Conteneur de liste (Injecté par JS) -->
+                    <div id="events-list-container" class="flex flex-col gap-3">
+                        <!-- Les cartes seront ici -->
+                    </div>
+                </div>
+
+            </ion-content>
+        </div>
     </ion-app>
-    
 </body>
 </html>

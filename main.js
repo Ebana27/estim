@@ -35,6 +35,89 @@
 // Initialize Ionic
 import('@ionic/core/loader');
 import('@ionic/core/css/ionic.bundle.css');
+import { defineCustomElements } from '@ionic/core/loader';
+import { addIcons } from 'ionicons';
+import {
+  home,
+  homeOutline,
+  apps,
+  appsOutline,
+  calendar,
+  calendarOutline,
+  megaphone,
+  megaphoneOutline,
+  library,
+  libraryOutline,
+  people,
+  peopleOutline,
+  notifications,
+  notificationsOutline,
+  arrowForward,
+  arrowForwardOutline,
+  arrowBack,
+  options,
+  optionsOutline,
+  funnel,
+  funnelOutline,
+  search,
+  searchOutline,
+  location,
+  locationOutline,
+  person,
+  personOutline,
+  informationCircle,
+  informationCircleOutline,
+  pricetag,
+  pricetagOutline,
+  cash,
+  cashOutline,
+  reload,
+  chevronBack,
+  chevronForward
+} from 'ionicons/icons';
+
+// Register all icons used in the application
+addIcons({
+  home,
+  'home-outline': homeOutline,
+  apps,
+  'apps-outline': appsOutline,
+  calendar,
+  'calendar-outline': calendarOutline,
+  megaphone,
+  'megaphone-outline': megaphoneOutline,
+  library,
+  'library-outline': libraryOutline,
+  people,
+  'people-outline': peopleOutline,
+  notifications,
+  'notifications-outline': notificationsOutline,
+  'arrow-forward': arrowForward,
+  'arrow-forward-outline': arrowForwardOutline,
+  'arrow-back': arrowBack,
+  options,
+  'options-outline': optionsOutline,
+  funnel,
+  'funnel-outline': funnelOutline,
+  search,
+  'search-outline': searchOutline,
+  location,
+  'location-outline': locationOutline,
+  person,
+  'person-outline': personOutline,
+  'information-circle': informationCircle,
+  'information-circle-outline': informationCircleOutline,
+  pricetag,
+  'pricetag-outline': pricetagOutline,
+  cash,
+  'cash-outline': cashOutline,
+  reload,
+  'chevron-back': chevronBack,
+  'chevron-forward': chevronForward
+});
+
+defineCustomElements(window);
+
 
 async function loadPage(path, name) {
   const res = await fetch(path);
@@ -172,10 +255,32 @@ async function checkUpdate() {
     const currentVersionData = await currentVersionResponse.json();
     const CURRENT_VERSION = currentVersionData.version;
 
-    // Replace with your actual Netlify URL
+    // Determine if we're in development or production
+    const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+
+    if (isDevelopment) {
+      // Skip update check in development
+      console.log('Skipping update check in development mode');
+      return null;
+    }
+
+    // Replace with your actual Netlify URL for production
     const UPDATE_URL = 'https://estim-update-xyz.netlify.app/version.json';
 
-    const res = await fetch(UPDATE_URL, { cache: 'no-store' });
+    // Attempt to fetch update info with a timeout to prevent hanging
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+
+    const res = await fetch(UPDATE_URL, {
+      cache: 'no-store',
+      signal: controller.signal
+    });
+    clearTimeout(timeoutId);
+
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
+
     const remote = await res.json();
 
     if (remote.version !== CURRENT_VERSION) {
@@ -183,7 +288,17 @@ async function checkUpdate() {
     }
     return null;
   } catch (e) {
-    console.error('Error checking for updates:', e);
+    // Handle different types of errors appropriately
+    if (e.name === 'AbortError') {
+      console.warn('Update check timed out');
+    } else if (e.name === 'TypeError' && e.message.includes('fetch')) {
+      console.warn('Network error during update check (likely CORS in development):', e.message);
+    } else if (e.message.includes('404')) {
+      console.warn('Update server not found (404), skipping update check');
+    } else {
+      console.warn('Update check failed:', e.message);
+    }
+    // In development or if there's a network/CORS issue, skip update check
     return null;
   }
 }
@@ -224,7 +339,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   await loadPage("pages/catg.html", "page-catg");
 
   // Fonction pour rendre la page actuelle
-  function renderCurrentPage() {
+  async function renderCurrentPage() {
     const currentPath = window.location.pathname;
     let pageName = "page-home"; // default
 
@@ -236,19 +351,55 @@ document.addEventListener("DOMContentLoaded", async () => {
       pageName = "page-catg";
     }
 
+    // Wait for ion-app to be available and for Ionic to be loaded
+    let ionApp = document.querySelector("ion-app");
+    let attempts = 0;
+    const maxAttempts = 60; // 6 seconds max wait time (increased)
+
+    while (!ionApp && attempts < maxAttempts) {
+      await new Promise(resolve => setTimeout(resolve, 100));
+      ionApp = document.querySelector("ion-app");
+      attempts++;
+
+      // If we still can't find it, try getting it from the document body
+      if (!ionApp && document.body) {
+        ionApp = document.body.querySelector("ion-app");
+      }
+    }
+
+    if (!ionApp) {
+      console.error("Failed to find ion-app element after waiting");
+      // Try to find ion-app in the document more thoroughly
+      const allIonApps = document.querySelectorAll("ion-app");
+      if (allIonApps.length > 0) {
+        ionApp = allIonApps[0];
+      } else {
+        // Last resort: create ion-app if it doesn't exist
+        console.warn("Creating ion-app element dynamically");
+        const newIonApp = document.createElement("ion-app");
+        if (document.body) {
+          document.body.appendChild(newIonApp);
+          ionApp = newIonApp;
+        } else {
+          console.error("Cannot create ion-app: document.body not available");
+          return;
+        }
+      }
+    }
+
     // Supprimer la page actuelle
-    const currentPage = document.querySelector("ion-app > *");
+    const currentPage = ionApp.querySelector('page-home, page-event, page-plan, page-catg');
     if (currentPage) {
       currentPage.remove();
     }
 
     // Ajouter la nouvelle page
     const newPage = document.createElement(pageName);
-    document.querySelector("ion-app").appendChild(newPage);
+    ionApp.appendChild(newPage);
   }
 
   // Rendre la page initiale
-  renderCurrentPage();
+  await renderCurrentPage(); // Await the async function
 
   // Fonction pour mettre à jour la navbar active
   function updateActiveNav() {
@@ -263,50 +414,58 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (profileIcon) profileIcon.setAttribute("name", "apps-outline");
     if (eventsIcon) eventsIcon.setAttribute("name", "calendar-outline");
 
-    // Remove active colors
-    document.querySelectorAll(".nav-item").forEach((link) => {
-      link.classList.remove("text-estim-green");
-      link.classList.add("text-estim-walnut");
-    });
+    // Remove active colors - check if elements exist before manipulating
+    const navItems = document.querySelectorAll(".nav-item");
+    if (navItems.length > 0) {
+      navItems.forEach((link) => {
+        link.classList.remove("text-estim-green");
+        link.classList.add("text-estim-walnut");
+      });
+    }
 
     // Set active based on current path
     if (currentPath === "/" || currentPath === "/index.html") {
       if (homeIcon) homeIcon.setAttribute("name", "home");
-      document.getElementById("home-btn").classList.remove("text-estim-walnut");
-      document.getElementById("home-btn").classList.add("text-estim-green");
+      const homeBtn = document.getElementById("home-btn");
+      if (homeBtn) {
+        homeBtn.classList.remove("text-estim-walnut");
+        homeBtn.classList.add("text-estim-green");
+      }
     } else if (currentPath.includes("/catg")) {
       if (profileIcon) profileIcon.setAttribute("name", "apps");
-      document
-        .getElementById("profile-btn")
-        .classList.remove("text-estim-walnut");
-      document.getElementById("profile-btn").classList.add("text-estim-green");
+      const profileBtn = document.getElementById("profile-btn");
+      if (profileBtn) {
+        profileBtn.classList.remove("text-estim-walnut");
+        profileBtn.classList.add("text-estim-green");
+      }
     } else if (currentPath.includes("/event") || currentPath.includes("/plan")) {
       if (eventsIcon) eventsIcon.setAttribute("name", "calendar");
-      document
-        .getElementById("events-btn")
-        .classList.remove("text-estim-walnut");
-      document.getElementById("events-btn").classList.add("text-estim-green");
+      const eventsBtn = document.getElementById("events-btn");
+      if (eventsBtn) {
+        eventsBtn.classList.remove("text-estim-walnut");
+        eventsBtn.classList.add("text-estim-green");
+      }
     }
   }
 
   // Mettre à jour la navbar au chargement initial
   updateActiveNav();
 
-  document.body.addEventListener("click", (ev) => {
+  document.body.addEventListener("click", async (ev) => { // Make the click handler async
     const el = ev.target.closest("[router-link]");
     if (!el) return;
     ev.preventDefault();
     const path = el.getAttribute("router-link") || el.getAttribute("href");
     if (!path) return;
     history.pushState({}, "", path);
-    renderCurrentPage();
+    await renderCurrentPage(); // Await the async function
     updateActiveNav();
     window.dispatchEvent(new PopStateEvent("popstate"));
   });
 
   // Écouter les changements d'URL pour mettre à jour la navbar
-  window.addEventListener("popstate", () => {
-    renderCurrentPage();
+  window.addEventListener("popstate", async () => { // Make the popstate handler async
+    await renderCurrentPage(); // Await the async function
     updateActiveNav();
   });
 });
