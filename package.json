@@ -15,9 +15,7 @@
   "devDependencies": {
     "@ionic/react-router": "^8.7.17",
     "@vitejs/plugin-legacy": "^7.2.1",
-    "autoprefixer": "^10.4.23",
     "connect": "^3.7.0",
-    "postcss": "^8.5.6",
     "serve-static": "^1.15.0",
     "tailwindcss": "^4.1.18",
     "vite": "^7.2.4",

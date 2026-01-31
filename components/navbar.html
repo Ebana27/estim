@@ -1,39 +1,28 @@
-<!-- Bottom Navigation Component -->
-<style>
-  :root {
-    /* Palette demandée ESTIM */
-    --estim-green: #117a2aff;
-    --estim-black: #000100ff;
-    --estim-dark-walnut: #432204ff;
-    --estim-walnut: #432204ff;
-    --estim-golden-pollen: #ffd036ff;
-    --estim-soft-linen: #d6dacbff;
-  }
-</style>
-<div class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-full max-w- 320px   px-4 pointer-events-none">
-  <div
-    class="bg-white/80 backdrop-blur-2xl border border-white/50 shadow-2xl rounded-full flex justify-around items-center px-4 py-3 pointer-events-auto">
+<!DOCTYPE html>
+<html lang="fr">
 
-    <!-- Home -->
-    <a router-link="/"
-      class="nav-item flex flex-col items-center justify-center w-14 h-14 rounded-full text- var(--estim-walnut)   hover:bg- color:var(--estim-green)/10   hover:text- var(--estim-green)   transition-all duration-300"
-      id="home-btn">
-      <ion-icon name="home-outline" class="text-2xl text- var(--estim-walnut)   hover:text- var(--estim-green)   transition-colors"></ion-icon>
-    </a>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="/src/css/style.css">
+</head>
 
-    <!-- Applications -->
-    <a router-link="/catg"
-      class="nav-item flex flex-col items-center justify-center w-14 h-14 rounded-full text- var(--estim-walnut)   hover:bg- color:var(--estim-green)/10   hover:text- var(--estim-green)   transition-all duration-300"
-      id="profile-btn">
-      <ion-icon name="apps-outline" class="text-2xl text- var(--estim-walnut)   hover:text- var(--estim-green)   transition-colors"></ion-icon>
-    </a>
+<body>
 
-    <!-- Events -->
-    <a router-link="/plan"
-      class="nav-item flex flex-col items-center justify-center w-14 h-14 rounded-full text- var(--estim-walnut)   hover:bg- color:var(--estim-green)/10   hover:text- var(--estim-green)   transition-all duration-300"
-      id="events-btn">
-      <ion-icon name="calendar-outline" class="text-2xl text- var(--estim-walnut)   hover:text- var(--estim-green)   transition-colors"></ion-icon>
-    </a>
+  <!-- Bottom Navigation Component -->
+  <style>
+    :root {
+      /* Palette demandée ESTIM */
+      --estim-green: #117a2aff;
+      --estim-black: #000100ff;
+      --estim-dark-walnut: #432204ff;
+      --estim-walnut: #432204ff;
+      --estim-golden-pollen: #ffd036ff;
+      --estim-soft-linen: #d6dacbff;
+    }
+  </style>
 
-  </div>
-</div>
+</body>
+  
+</html>

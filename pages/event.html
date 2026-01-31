@@ -9,9 +9,21 @@
 <body class="estim-announces-page text-gray-900">
     <ion-app>
         <div class="ion-page">
-            <!-- HEADER & RECHERCHE (Sticky) -->
+            <!-- HEADER -->
             <ion-header class="ion-no-border">
-                <!-- Zone blanche en haut -->
+                <ion-toolbar class="bg-white/90 backdrop-blur-md border-b border-gray-100 shadow-sm">
+                    <ion-buttons slot="start" class="pl-2">
+                        <!-- Utilisation de window.history.back() pour la navigation -->
+                        <button onclick="window.history.back()" class="flex items-center justify-center w-10 h-10 rounded-lg hover:bg-gray-100 transition-colors">
+                            <ion-icon name="arrow-back" class="text-2xl text-gray-800"></ion-icon>
+                        </button>
+                    </ion-buttons>
+                    <ion-title class="text-lg font-bold text-estim-black tracking-wide text-center">
+                        Événements
+                    </ion-title>
+                </ion-toolbar>
+
+                <!-- Zone blanche en haut pour la recherche et les filtres -->
                 <div class="bg-white border-b border-gray-100">
                     <!-- Barre de recherche -->
                     <div class="px-4 pt-4 pb-2">

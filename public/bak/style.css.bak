@@ -32,8 +32,6 @@
 	--estim-walnut: #432204ff;
 	--estim-golden-pollen: #ffd036ff;
 	--estim-soft-linen: #d6dacbff;
-	--estim-gold: #ffd036;
-
 
 	/* Additional modern colors */
 	--light-gray: #f8f9fa;
@@ -48,172 +46,6 @@
 	--font-main: 'Poppins', sans-serif;
 	--ion-color-primary: var(--estim-walnut);
 
-
-}
-
-/* =========================================
-   ESTIM PLAN PAGE - LA SOURCE DE VÉRITÉ
-   ========================================= */
-
-/* --- 1. BOUTONS DE FILTRE (Vert ESTIM vs Blanc/Gris) --- */
-.estim-inactive-btn {
-    background-color: #ffffff;
-    color: #374151; /* gray-700 */
-    border: 1px solid #e5e7eb; /* gray-200 */
-    border-radius: 12px; /* rounded-xl */
-    font-weight: 500;
-    transition: all 0.2s ease;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-}
-
-.estim-active-btn {
-    background-color: var(--estim-green); /* #117a2a -> Vert ESTIM */
-    color: #ffffff;
-    border: 1px solid var(--estim-green);
-    border-radius: 12px;
-    font-weight: 600;
-    box-shadow: 0 4px 6px -1px rgba(17, 122, 42, 0.2);
-    transition: all 0.2s ease;
-}
-
-/* --- 2. SÉLECTEUR DE SEMAINE (Gris Clair) --- */
-.estim-week-selector {
-    background-color: #f3f4f6; /* gray-100 */
-    border-radius: 16px; /* rounded-2xl */
-    box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.03); /* effet enfoncé */
-    border: 1px solid #e5e7eb;
-}
-
-/* --- 3. SÉLECTEUR DE JOURS (Vert Actif / Blanc Inactif) --- */
-.estim-day-inactive {
-    background-color: #ffffff;
-    color: #374151;
-    border: 1px solid #e5e7eb;
-    border-radius: 12px;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.estim-day-active {
-    background-color: #000000; /* Fond Noir pour le contraste (Style Prototype demandé pour le texte) */
-    color: #ffffff;
-    border: 1px solid #000000;
-    box-shadow: 0 4px 12px rgba(17, 122, 42, 0.3); /* Ombre marqué */
-    transform: scale(1.05);
-    z-index: 10; /* Au dessus des autres */
-}
-
-/* Barre latérale verte pour les cartes de cours */
-.estim-plan-card {
-    border-left: 4px solid var(--estim-green);
-}
-
-/* Bouton Télécharger (Walnut/Or) */
-.estim-download-btn {
-    background-color: var(--estim-walnut); /* Marron/Noir */
-    color: #ffffff;
-    border-radius: 16px;
-}
-
-/* --- 5. CUSTOM SELECT WRAPPER --- */
-
-.custom-select-wrapper {
-	position: relative;
-	width: 100%;
-	height: 40px;
-	/* h-10 */
-}
-
-.custom-select-display {
-	width: 100%;
-	height: 100%;
-	background-color: #ffffff;
-	border: 1px solid #e5e7eb;
-	/* border-gray-200 */
-	border-radius: 12px;
-	/* rounded-xl */
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	padding: 0 1rem;
-	/* px-4 */
-	pointer-events: none;
-	/* Le clic traverse */
-	color: #000000;
-	font-size: 0.875rem;
-	/* text-sm */
-	font-weight: 500;
-}
-
-.native-select-hidden {
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	opacity: 0;
-	cursor: pointer;
-	z-index: 10;
-	appearance: none;
-}
-
-/* --- 6. CARTES DE COURS --- */
-
-.estim-plan-card {
-	background-color: #ffffff;
-	border: 1px solid #e5e7eb;
-	/* border-gray-200 */
-	border-radius: 12px;
-	/* rounded-xl / lg */
-	padding: 1rem;
-	/* p-4 */
-	box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-	/* shadow-sm */
-	position: relative;
-	overflow: hidden;
-	transition: box-shadow 0.2s;
-}
-
-/* Barre latérale verte */
-.estim-plan-card::before {
-	content: '';
-	position: absolute;
-	left: 0;
-	top: 0;
-	bottom: 0;
-	width: 6px;
-	background-color: var(--estim-green);
-	border-top-left-radius: 12px;
-	border-bottom-left-radius: 12px;
-}
-
-/* --- 7. UTILITAIRES TYPOGRAPHIQUES --- */
-
-.text-ui-gray {
-	color: #6b7280;
-}
-
-.text-estim-green {
-	color: var(--estim-green);
-}
-
-.bg-estim-pollen {
-	background-color: var(--estim-gold);
-}
-
-.text-estim-walnut {
-	color: var(--estim-walnut);
-}
-
-.border-estim-linen {
-	border-color: #e5e7eb;
-}
-
-.rounded-estim-md {
-	border-radius: 12px;
-}
-
-.font-inter {
-	font-family: 'Inter', sans-serif;
 }
 
 ion-icon {
@@ -296,66 +128,12 @@ ion-title {
 	position: relative;
 	overflow: hidden;
 	color: black;
-	background: linear-gradient(135deg, rgba(214, 218, 203, 0.7), rgba(255, 255, 255, 0.5));
-}
 
-/* Lava lamp animated background elements */
-.estim-hero::before {
-	content: '';
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	z-index: -1;
-
-	/* Create multiple colored blobs */
-	background:
-		radial-gradient(circle at 20% 30%, #ff9a9e 0%, transparent 40%),
-		radial-gradient(circle at 80% 70%, #fad0c4 0%, transparent 40%),
-		radial-gradient(circle at 40% 60%, #a1c4fd 0%, transparent 40%),
-		radial-gradient(circle at 60% 20%, #c2e9fb 0%, transparent 40%),
-		radial-gradient(circle at 30% 80%, #d4fc79 0%, transparent 40%);
-
-	/* Animation for lava lamp effect */
-	animation: lavaLamp 15s ease-in-out infinite;
-
-	/* Apply blur to create the soft lava lamp appearance */
-	filter: blur(25px);
-}
-
-@keyframes lavaLamp {
-	0% {
-		transform: scale(1) rotate(0deg);
-		background-position: 0% 50%, 100% 50%, 50% 0%, 50% 100%, 20% 80%;
-	}
-
-	25% {
-		transform: scale(1.05) rotate(2deg);
-		background-position: 20% 30%, 70% 80%, 60% 40%, 40% 20%, 50% 90%;
-	}
-
-	50% {
-		transform: scale(0.98) rotate(-2deg);
-		background-position: 40% 10%, 90% 60%, 30% 70%, 10% 30%, 80% 50%;
-	}
-
-	75% {
-		transform: scale(1.03) rotate(1deg);
-		background-position: 10% 70%, 50% 20%, 80% 90%, 70% 10%, 30% 40%;
-	}
-
-	100% {
-		transform: scale(1) rotate(0deg);
-		background-position: 0% 50%, 100% 50%, 50% 0%, 50% 100%, 20% 80%;
-	}
-}
-
-/* Ensure content stays on top */
-.estim-hero h2,
-.estim-hero p {
-	position: relative;
-	z-index: 10;
+	background-color: rgba(214, 218, 203, 0.7);
+	/* fallback with transparency */
+	background-image: url('/public/image.png');
+	background-size: cover;
+	background-position: center;
 }
 
 .element-blur {
@@ -1205,65 +983,58 @@ select {
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 .estim-announces-page {
-	font-family: 'Inter', sans-serif;
-	background-color: #F9FAFB;
-	/* gray-50 */
+    font-family: 'Inter', sans-serif;
+    background-color: #F9FAFB; /* gray-50 */
 }
 
 /* Recherche */
 .estim-search-bar {
-	background-color: #F3F4F6;
-	/* gray-100/50 */
-	border-radius: 12px;
-	height: 48px;
+    background-color: #F3F4F6; /* gray-100/50 */
+    border-radius: 12px;
+    height: 48px;
 }
 
 /* Chips de filtre */
 .estim-chip {
-	height: 36px;
-	border-radius: 9999px;
-	font-size: 0.875rem;
-	/* 14px */
-	font-weight: 500;
-	transition: all 0.2s;
+    height: 36px;
+    border-radius: 9999px;
+    font-size: 0.875rem; /* 14px */
+    font-weight: 500;
+    transition: all 0.2s;
 }
 
 .estim-chip-active {
-	background-color: #6366F1;
-	/* indigo-500 */
-	color: white;
+    background-color: #6366F1; /* indigo-500 */
+    color: white;
 }
 
 .estim-chip-inactive {
-	background-color: #F3F4F6;
-	/* gray-100 */
-	color: #374151;
-	/* gray-700 */
+    background-color: #F3F4F6; /* gray-100 */
+    color: #374151; /* gray-700 */
 }
 
 /* Carte Vedette */
 .estim-featured-card {
-	background: linear-gradient(to bottom right, #9333EA, #2563EB);
-	/* Purple-600 to Blue-600 */
-	border-radius: 16px;
-	color: white;
+    background: linear-gradient(to bottom right, #9333EA, #2563EB); /* Purple-600 to Blue-600 */
+    border-radius: 16px;
+    color: white;
 }
 
 /* Liste Événements */
 .estim-event-card {
-	background-color: white;
-	border-radius: 12px;
-	box-shadow: 0 1px 2px 0px rgba(0, 0, 0, 0.05);
-	border: 1px solid rgba(0, 0, 0, 0.05);
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 1px 2px 0px rgba(0,0,0,0.05);
+    border: 1px solid rgba(0,0,0,0.05);
 }
 
 .estim-date-box {
-	width: 80px;
-	height: 80px;
-	border-radius: 12px 0 0 12px;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	color: white;
+    width: 80px;
+    height: 80px;
+    border-radius: 12px 0 0 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
 }

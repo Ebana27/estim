@@ -118,13 +118,9 @@
 
       <ion-item button detail="false" class="menu-item" (click)="onClick()">
         <ion-icon slot="start" name="library-outline"></ion-icon>
-        <ion-label class="label-text">Bibliothèque</ion-label>
+        <ion-label onclick="showNotifications()" id="notif" class="label-text">Bibliothèque</ion-label>
       </ion-item>
 
-      <ion-item button detail="false" class="menu-item">
-        <ion-icon slot="start" name="people-outline"></ion-icon>
-        <ion-label class="label-text">Partenaire</ion-label>
-      </ion-item>
     </ion-menu-toggle>
   </ion-list>
 
@@ -183,7 +179,7 @@
                   <p class="text-sm opacity-90 mb-3 leading-relaxed">
                     Toute l'info pour bien commencer l'année scolaire.
                   </p>
-                  <ion-button class="btn-estim">
+                  <ion-button onclick="showNotifications()" id="notif" class="btn-estim">
                     En savoir plus
                     <ion-icon slot="end" name="arrow-forward-outline"></ion-icon>
                   </ion-button>
@@ -196,7 +192,7 @@
 
               <!-- Slide 2 -->
               <div
-                class="snap-center shrink-0 w-[85vw] h-[220px] bg-gradient-to-br from-[#432204ff] to-[#ffd036ff] rounded-[2rem] relative overflow-hidden shadow-lg shadow-green-900/10 flex items-center select-none">
+                class="snap-center shrink-0 w-[85vw] h-[220px] bg-gradient-to-br from-[#3b3835] to-[#ffd036ff] rounded-[2rem] relative overflow-hidden shadow-lg shadow-green-900/10 flex items-center select-none">
                 <div class="absolute right-0 top-0 w-48 h-48 bg-white opacity-10 rounded-full -mr-16 -mt-16 blur-2xl">
                 </div>
 
@@ -283,7 +279,7 @@
               </div>
 
               <!-- Illustration Calendrier SVG -->
-              <video src="/vid/calendar.mp4" autoplay muted loop></video>
+               <img src="/public/plan.png" alt="Emploi-du-temps">
             </div>
 
             <div class="w-full mt-auto">
@@ -324,7 +320,7 @@
               </div>
 
               <!-- Illustration Megaphone SVG -->
-              <video src="/vid/event.mp4" loop muted autoplay></video>
+               <img src="/public/annonce.png" alt="annonce">
             </div>
 
             <div class="w-full mt-auto">

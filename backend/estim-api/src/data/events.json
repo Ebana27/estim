@@ -1,0 +1,30 @@
+[
+  {
+    "id": 1,
+    "title": "Concert Rock",
+    "location": "Stade de France",
+    "date": "18 Mars 2024",
+    "day": "MAR",
+    "dayNum": 18,
+    "price": "€45",
+    "participants": "1.2k participants",
+    "type": "Concert",
+    "gradient": "from-orange-400 to-red-500",
+    "description": "Une soirée explosive avec les plus grands groupes de rock français et internationaux.",
+    "isFeatured": false
+  },
+  {
+    "id": 2,
+    "title": "Absence Prof. Martin",
+    "location": "Salle A204",
+    "date": "26 Mars 2024",
+    "day": "MAR",
+    "dayNum": 26,
+    "price": null,
+    "participants": null,
+    "type": "Annonce",
+    "gradient": "from-gray-500 to-gray-600",
+    "description": "Le cours d'algorithmique est annulé. Veuillez consulter la liste des rattrapages.",
+    "isFeatured": false
+  }
+]
