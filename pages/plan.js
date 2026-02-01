@@ -1,40 +1,87 @@
 /* --- plan.js --- */
+import { btnInteraction } from "../main.js";
+
+const levBtn1 = document.getElementById("levelBtn1");
+const levBtn2 = document.getElementById("levelBtn2");
+const levBtn3 = document.getElementById("levelBtn3");
+
+const typBtn1 = document.getElementById("typeBtn1");
+const typBtn2 = document.getElementById("typeBtn2");
+const typBtn3 = document.getElementById("typeBtn3");
+
+btnInteraction(levBtn2, levBtn1, levBtn3);
+btnInteraction(levBtn3, levBtn1, levBtn2);
+btnInteraction(levBtn1, levBtn2, levBtn3);
+
+btnInteraction(typBtn2, typBtn1, typBtn3);
+btnInteraction(typBtn3, typBtn1, typBtn2);
+btnInteraction(typBtn1, typBtn2, typBtn3);
 
 let rawData = null;
 
-// --- 0. APPEL API (Fonction utilitaire) ---
-async function callApi() {
-  const apiUrl = "http://localhost:5500/api/schedule";
+// --- 0. APPEL API (Modifiée pour accepter une date) ---
+async function callApi(startDate = null) {
+  // Si aucune date n'est fournie, on utilise celle de l'état actuel
+  const dateToFetch = startDate || state.currentWeekStart;
+  
+  // Formatage de la date pour l'API (YYYY-MM-DD)
+  const formattedDate = dateToFetch.toISOString().split('T')[0];
+  
+  const apiUrl = `http://localhost:5500/api/schedule?date=${formattedDate}`;
+  
   try {
     const response = await fetch(apiUrl);
     if (response.ok) {
-      console.log("Données API reçues !");
+      console.log(`Données API reçues pour la semaine du ${formattedDate} !`);
       const dataNew = await response.json();
-      rawData = { schedule: dataNew }; // On reformate pour respecter la structure attendue par le reste du code
+      rawData = { schedule: dataNew };
 
-      // S'assurer que l'index du jour est valide
       if (!rawData.schedule || rawData.schedule.length <= state.dayIndex) {
         state.dayIndex = 0;
       }
+      // On force le rafraîchissement de l'écran après reception des nouvelles données
+      renderAll();
     } else {
       console.error("Erreur API, statut:", response.status);
     }
   } catch (error) {
     console.error("Erreur fetch:", error);
-    // Ici tu pourrais mettre des données factuelles de secours si besoin
   }
 }
 
-// --- 1. DONNÉES (Déjà géré par rawData) ---
+// --- 1. LOGIQUE DE DATE (CORRECTION DU SAMEDI/DIMANCHE) ---
 
-// --- 2. ÉTAT DE L'APPLICATION ---
+function getStartOfWeek(date) {
+  const d = new Date(date);
+  const day = d.getDay();
+  const diff = d.getDate() - day + (day === 0 ? -6 : 1); // Ajuste pour trouver le Lundi
+  d.setDate(diff);
+
+  // --- CORRECTION IMPORTANTE ---
+  // Si on est Samedi (6) ou Dimanche (0), on force l'affichage sur la semaine SUIVANTE
+  const today = new Date();
+  const currentDay = today.getDay();
+  
+  // On compare juste les jours pour savoir si on est en week-end
+  if (currentDay === 6 || currentDay === 0) {
+    console.log("Week-end détecté : Passage à la semaine prochaine.");
+    d.setDate(d.getDate() + 7);
+  }
+  
+  return d;
+}
+
+const dateSys = new Date();
+
 const state = {
   level: "L2",
   filiere: "Génie Logiciel",
   type: "Cours",
   dayIndex: 0,
-  currentWeekStart: new Date(2026, 0, 1),
+  // Initialisation avec la logique "Sauter le week-end"
+  currentWeekStart: getStartOfWeek(dateSys), 
 };
+
 
 const levelMap = {
   L1: "1ère Année",
@@ -42,17 +89,11 @@ const levelMap = {
   L3: "3ème Année",
 };
 
-// --- 3. INITIALISATION ---
-// IMPORTANT : On exporte cette fonction pour que main.js puisse l'appeler
-// Et on la rend async pour attendre les données
+// --- 2. INITIALISATION ---
 export async function initPlanPage() {
   console.log("Initialisation de la page Plan...");
-
-  // 1. On attend que les données arrivent
+  // Premier appel API pour charger la bonne semaine (ex: Février si on est Dimanche)
   await callApi();
-
-  // 2. On affiche tout seulement après
-  renderAll();
 }
 
 function renderAll() {
@@ -63,34 +104,26 @@ function renderAll() {
   updateFiliereDisplay();
 }
 
-// --- 4. LOGIQUE DE FILTRAGE (Inchangée) ---
+// --- 3. LOGIQUE DE FILTRAGE ---
 window.setFilter = function (type, value) {
   if (type === "level") state.level = value;
   if (type === "filiere") state.filiere = value;
   if (type === "type") state.type = value;
-
-  if (!rawData || !rawData.schedule || rawData.schedule.length <= state.dayIndex) {
-    state.dayIndex = 0;
-  }
-
   renderSchedule();
   updateFilterStyles();
   updateFiliereDisplay();
 };
 
-// --- 5. GESTION DE LA SEMAINE (Inchangée) ---
+// --- 4. GESTION DE LA SEMAINE (CHANGE SEMAINE) ---
 window.changeWeek = function (offset) {
+  // 1. Calculer la nouvelle date de début de semaine
   const newDate = new Date(state.currentWeekStart);
   newDate.setDate(newDate.getDate() + offset * 7);
   state.currentWeekStart = newDate;
 
-  if (!rawData || !rawData.schedule || rawData.schedule.length <= state.dayIndex) {
-    state.dayIndex = 0;
-  }
-
-  renderWeekDays();
-  updateWeekDisplay();
-  renderSchedule();
+  // 2. Appeler l'API pour charger les cours de cette NOUVELLE semaine
+  // C'est ici que les dates "vedette" vont changer
+  callApi(state.currentWeekStart);
 };
 
 function updateWeekDisplay() {
@@ -99,7 +132,10 @@ function updateWeekDisplay() {
   end.setDate(end.getDate() + 4);
 
   const options = { month: "short", day: "numeric" };
-  const rangeStr = `${start.toLocaleDateString("fr-FR", options)} - ${end.toLocaleDateString("fr-FR", options)} ${start.getFullYear()}`;
+  
+  // Affichage plus propre : on n'affiche l'année que si nécessaire, ou on raccourcit
+  // Ex: "27 Jan - 02 Fév"
+  const rangeStr = `${start.toLocaleDateString("fr-FR", options)} - ${end.toLocaleDateString("fr-FR", options)}`;
 
   const rangeEl = document.getElementById("week-range");
   if (rangeEl) rangeEl.innerText = rangeStr;
@@ -117,33 +153,36 @@ function renderWeekDays() {
     const dayNum = date.getDate();
     const btn = document.createElement("div");
 
-    const isActive = (!rawData || !rawData.schedule || rawData.schedule.length <= i) ? false : (i === state.dayIndex);
-    const baseClasses = "flex-1 h-16 rounded-estim-md flex flex-col justify-center items-center cursor-pointer transition-all duration-200 min-w-[60px]";
-    const activeClasses = "bg-estim-green text-white shadow-md scale-105";
-    const inactiveClasses = "bg-white text-ui-gray border border-estim-linen hover:bg-ui-light";
+    // Vérification si le jour est sélectionné
+    const isActive = i === state.dayIndex;
+    
+    const baseClasses =
+      "flex-1 h-16 rounded-estim-md flex flex-col justify-center items-center cursor-pointer transition-all duration-200 min-w-[60px]";
+    const activeClasses = "bg-green-400 text-white shadow-md scale-105";
+    const inactiveClasses =
+      "bg-white text-ui-gray border border-estim-linen hover:bg-ui-light";
 
     btn.className = `${baseClasses} ${isActive ? activeClasses : inactiveClasses}`;
 
     btn.onclick = () => {
-      if (!rawData || !rawData.schedule || rawData.schedule.length <= i) {
-        console.warn(`Jour indispo`);
-        return;
-      }
       state.dayIndex = i;
-      renderWeekDays();
-      renderSchedule();
+      renderWeekDays(); // Re-render pour mettre à jour la sélection visuelle
+      renderSchedule(); // Mettre à jour la liste des cours
     };
 
+    // Affichage uniquement du numéro du jour (plus propre)
     btn.innerHTML = `
       <div class="text-xs font-medium mb-1 opacity-90">${labels[i]}</div>
       <div class="text-lg font-bold">${dayNum}</div>
     `;
     container.appendChild(btn);
+    
+    // Incrémenter pour le prochain jour
     date.setDate(date.getDate() + 1);
   }
 }
 
-// --- 6. RENDU DE LA LISTE (Schedule) ---
+// --- 5. RENDU DE LA LISTE (Schedule) ---
 function renderSchedule() {
   const container = document.getElementById("schedule-list");
   const dateDisplay = document.getElementById("current-date-display");
@@ -151,23 +190,27 @@ function renderSchedule() {
   if (!container) return;
 
   if (!rawData || !rawData.schedule) {
-    container.innerHTML = `<div class="text-center py-10 text-ui-gray italic">Chargement des données...</div>`;
+    container.innerHTML = `<div class="text-center py-10 text-ui-gray italic">Chargement...</div>`;
     return;
   }
 
   container.innerHTML = "";
 
+  // Sécurité si l'API ne renvoie pas assez de jours
   if (!rawData.schedule || rawData.schedule.length <= state.dayIndex) {
-    container.innerHTML = `<div class="text-center py-10 text-ui-gray italic">Aucune donnée disponible pour ce jour.</div>`;
+    container.innerHTML = `<div class="text-center py-10 text-ui-gray italic">Aucune donnée pour ce jour.</div>`;
     return;
   }
 
   const currentDayData = rawData.schedule[state.dayIndex];
+  
+  // Calcul de la date affichée (Lundi + index)
   const dateObj = new Date(state.currentWeekStart);
   dateObj.setDate(dateObj.getDate() + state.dayIndex);
 
   const dateOptions = { weekday: "long", day: "numeric", month: "long" };
-  if (dateDisplay) dateDisplay.innerText = dateObj.toLocaleDateString("fr-FR", dateOptions);
+  if (dateDisplay)
+    dateDisplay.innerText = dateObj.toLocaleDateString("fr-FR", dateOptions);
 
   if (!currentDayData || !currentDayData.sessions) {
     container.innerHTML = `<div class="text-center py-10 text-ui-gray italic">Aucune donnée disponible.</div>`;
@@ -180,8 +223,10 @@ function renderSchedule() {
 
   const filteredSessions = currentDayData.sessions
     .filter((session) => {
-      const cycleMatch = session.cycle === "all" || session.cycle === targetCycle;
-      const filiereMatch = session.filiere === "all" || session.filiere === targetFiliere;
+      const cycleMatch =
+        session.cycle === "all" || session.cycle === targetCycle;
+      const filiereMatch =
+        session.filiere === "all" || session.filiere === targetFiliere;
 
       let typeMatch = false;
       if (targetType === "Sessions") {
@@ -199,9 +244,6 @@ function renderSchedule() {
   if (filteredSessions.length === 0) {
     container.innerHTML = `
       <div class="flex flex-col items-center justify-center py-12 bg-white rounded-estim-md border border-estim-linen border-dashed">
-        <div class="w-12 h-12 bg-ui-light rounded-full flex items-center justify-center mb-3 text-estim-walnut">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-        </div>
         <p class="text-sm font-medium text-ui-gray">Aucun cours prévu.</p>
       </div>
     `;
@@ -209,7 +251,8 @@ function renderSchedule() {
     filteredSessions.forEach((session) => {
       const endTime = calculateEndTime(session.time, session.duration);
       const card = document.createElement("div");
-      card.className = "w-full bg-white rounded-estim-md p-5 border border-estim-linen shadow-sm relative flex overflow-hidden group hover:shadow-md transition-shadow";
+      card.className =
+        "w-full bg-white rounded-estim-md p-5 border border-estim-linen shadow-sm relative flex overflow-hidden group hover:shadow-md transition-shadow";
 
       card.innerHTML = `
         <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-estim-green"></div>
@@ -223,13 +266,15 @@ function renderSchedule() {
             <h3 class="text-sm font-bold text-estim-black leading-tight pr-2 w-3/4">${session.title}</h3>
             <span class="text-[10px] font-bold uppercase tracking-wide bg-estim-pollen text-estim-black px-2 py-0.5 rounded-full">${session.duration}</span>
           </div>
-          ${session.professor ? `
+          ${
+            session.professor
+              ? `
           <div class="flex items-center gap-2 text-xs text-estim-walnut mb-1 font-medium">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
             <span>${session.professor}</span>
-          </div>` : ''}
+          </div>`
+              : ""
+          }
           <div class="flex items-center gap-2 text-xs text-ui-gray">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
             <span>${session.room}</span>
           </div>
         </div>
@@ -237,17 +282,15 @@ function renderSchedule() {
       container.appendChild(card);
     });
 
+    // Ajout pause déjeuner
     const lunch = document.createElement("div");
     lunch.className = "w-full h-10 flex justify-center items-center relative my-4";
-    lunch.innerHTML = `
-      <div class="w-full h-px bg-estim-linen absolute left-0"></div>
-      <div class="bg-estim-linen/30 px-4 py-1 rounded-full text-[10px] font-bold text-estim-walnut uppercase tracking-wider z-10 backdrop-blur-sm">Pause Déjeuner</div>
-    `;
+    lunch.innerHTML = `<div class="w-full h-px bg-estim-linen absolute left-0"></div><div class="bg-white px-3 text-[10px] font-bold text-estim-walnut uppercase tracking-wider z-10">Pause Déjeuner</div>`;
     container.appendChild(lunch);
   }
 }
 
-// --- 7. UTILITAIRES ---
+// --- 6. UTILITAIRES ---
 function calculateEndTime(time, duration) {
   const [hours, minutes] = time.split(":").map(Number);
   const totalMinutes = hours * 60 + minutes;
@@ -268,14 +311,11 @@ function calculateEndTime(time, duration) {
 
 window.downloadSchedule = function () {
   localStorage.setItem("estim_schedule", JSON.stringify(rawData));
-
   const toast = document.createElement("ion-toast");
   toast.message = "Emploi du temps sauvegardé localement!";
   toast.duration = 2000;
   toast.color = "success";
-  toast.position = "bottom";
+  document.position = "bottom";
   document.body.appendChild(toast);
   return toast.present();
 };
-
-// On NE MET PAS le addEventListener ici, c'est géré par main.js

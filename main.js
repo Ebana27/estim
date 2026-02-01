@@ -33,10 +33,10 @@
 // ═══════════════════════════════════════════════════════════════════════════
 
 // Initialize Ionic
-import('@ionic/core/loader');
-import('@ionic/core/css/ionic.bundle.css');
-import { defineCustomElements } from '@ionic/core/loader';
-import { addIcons } from 'ionicons';
+import("@ionic/core/loader");
+import("@ionic/core/css/ionic.bundle.css");
+import { defineCustomElements } from "@ionic/core/loader";
+import { addIcons } from "ionicons";
 import {
   home,
   homeOutline,
@@ -73,51 +73,51 @@ import {
   cashOutline,
   reload,
   chevronBack,
-  chevronForward
-} from 'ionicons/icons';
+  chevronForward,
+  backspaceOutline,
+} from "ionicons/icons";
 
 // Register all icons used in the application
 addIcons({
   home,
-  'home-outline': homeOutline,
+  "home-outline": homeOutline,
   apps,
-  'apps-outline': appsOutline,
+  "apps-outline": appsOutline,
   calendar,
-  'calendar-outline': calendarOutline,
+  "calendar-outline": calendarOutline,
   megaphone,
-  'megaphone-outline': megaphoneOutline,
+  "megaphone-outline": megaphoneOutline,
   library,
-  'library-outline': libraryOutline,
+  "library-outline": libraryOutline,
   people,
-  'people-outline': peopleOutline,
+  "people-outline": peopleOutline,
   notifications,
-  'notifications-outline': notificationsOutline,
-  'arrow-forward': arrowForward,
-  'arrow-forward-outline': arrowForwardOutline,
-  'arrow-back': arrowBack,
+  "notifications-outline": notificationsOutline,
+  "arrow-forward": arrowForward,
+  "arrow-forward-outline": arrowForwardOutline,
+  "arrow-back": arrowBack,
   options,
-  'options-outline': optionsOutline,
+  "options-outline": optionsOutline,
   funnel,
-  'funnel-outline': funnelOutline,
+  "funnel-outline": funnelOutline,
   search,
-  'search-outline': searchOutline,
+  "search-outline": searchOutline,
   location,
-  'location-outline': locationOutline,
+  "location-outline": locationOutline,
   person,
-  'person-outline': personOutline,
-  'information-circle': informationCircle,
-  'information-circle-outline': informationCircleOutline,
+  "person-outline": personOutline,
+  "information-circle": informationCircle,
+  "information-circle-outline": informationCircleOutline,
   pricetag,
-  'pricetag-outline': pricetagOutline,
+  "pricetag-outline": pricetagOutline,
   cash,
-  'cash-outline': cashOutline,
+  "cash-outline": cashOutline,
   reload,
-  'chevron-back': chevronBack,
-  'chevron-forward': chevronForward
+  "chevron-back": chevronBack,
+  "chevron-forward": chevronForward,
 });
 
 defineCustomElements(window);
-
 
 async function loadPage(path, name) {
   const res = await fetch(path);
@@ -125,8 +125,8 @@ async function loadPage(path, name) {
 
   // Parser le HTML pour extraire le contenu du body
   const parser = new DOMParser();
-  const doc = parser.parseFromString(html, 'text/html');
-  const ionApp = doc.querySelector('ion-app');
+  const doc = parser.parseFromString(html, "text/html");
+  const ionApp = doc.querySelector("ion-app");
   const bodyContent = ionApp ? ionApp.innerHTML : doc.body.innerHTML;
 
   // Charger la navbar et l'ajouter à la fin
@@ -144,45 +144,57 @@ async function loadPage(path, name) {
           this.innerHTML = finalHtml;
 
           // Charger et exécuter le script JS associé si disponible
-          if (path.includes('pages/home.html')) {
-            import('./pages/home.js')
+          if (path.includes("pages/home.html")) {
+            import("./pages/home.js")
               .then((module) => {
                 if (module.initHomePage) {
                   module.initHomePage();
                 }
               })
               .catch((err) => {
-                console.error("Erreur lors du chargement du script: ./pages/home.js", err);
+                console.error(
+                  "Erreur lors du chargement du script: ./pages/home.js",
+                  err,
+                );
               });
-          } else if (path.includes('pages/event.html')) {
-            import('./pages/event.js')
+          } else if (path.includes("pages/event.html")) {
+            import("./pages/event.js")
               .then((module) => {
                 if (module.initEventPage) {
                   module.initEventPage();
                 }
               })
               .catch((err) => {
-                console.error("Erreur lors du chargement du script: ./pages/event.js", err);
+                console.error(
+                  "Erreur lors du chargement du script: ./pages/event.js",
+                  err,
+                );
               });
-          } else if (path.includes('pages/plan.html')) {
-            import('./pages/plan.js')
+          } else if (path.includes("pages/plan.html")) {
+            import("./pages/plan.js")
               .then((module) => {
                 if (module.initPlanPage) {
                   module.initPlanPage();
                 }
               })
               .catch((err) => {
-                console.error("Erreur lors du chargement du script: ./pages/plan.js", err);
+                console.error(
+                  "Erreur lors du chargement du script: ./pages/plan.js",
+                  err,
+                );
               });
-          } else if (path.includes('pages/catg.html')) {
-            import('./pages/catg.js')
+          } else if (path.includes("pages/catg.html")) {
+            import("./pages/catg.js")
               .then((module) => {
                 if (module.initCatgPage) {
                   module.initCatgPage();
                 }
               })
               .catch((err) => {
-                console.error("Erreur lors du chargement du script: ./pages/catg.js", err);
+                console.error(
+                  "Erreur lors du chargement du script: ./pages/catg.js",
+                  err,
+                );
               });
           }
         }
@@ -194,7 +206,7 @@ async function loadPage(path, name) {
 // Show a toast notification about the update
 function showToast({ message, button, onClick }) {
   // Create toast element
-  const toast = document.createElement('div');
+  const toast = document.createElement("div");
   toast.style.cssText = `
     position: fixed;
     bottom: 20px;
@@ -214,19 +226,19 @@ function showToast({ message, button, onClick }) {
   `;
 
   // Create message element
-  const messageEl = document.createElement('span');
+  const messageEl = document.createElement("span");
   messageEl.textContent = message;
-  messageEl.style.marginRight = '15px';
+  messageEl.style.marginRight = "15px";
 
   // Create button element
-  const buttonEl = document.createElement('button');
+  const buttonEl = document.createElement("button");
   buttonEl.textContent = button;
-  buttonEl.style.backgroundColor = '#4CAF50';
-  buttonEl.style.color = 'white';
-  buttonEl.style.border = 'none';
-  buttonEl.style.padding = '8px 16px';
-  buttonEl.style.borderRadius = '4px';
-  buttonEl.style.cursor = 'pointer';
+  buttonEl.style.backgroundColor = "#4CAF50";
+  buttonEl.style.color = "white";
+  buttonEl.style.border = "none";
+  buttonEl.style.padding = "8px 16px";
+  buttonEl.style.borderRadius = "4px";
+  buttonEl.style.cursor = "pointer";
   buttonEl.onclick = () => {
     onClick();
     document.body.removeChild(toast);
@@ -251,29 +263,31 @@ function showToast({ message, button, onClick }) {
 async function checkUpdate() {
   try {
     // Get current version from the version.json file
-    const currentVersionResponse = await fetch('./version.json');
+    const currentVersionResponse = await fetch("./version.json");
     const currentVersionData = await currentVersionResponse.json();
     const CURRENT_VERSION = currentVersionData.version;
 
     // Determine if we're in development or production
-    const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    const isDevelopment =
+      window.location.hostname === "localhost" ||
+      window.location.hostname === "127.0.0.1";
 
     if (isDevelopment) {
       // Skip update check in development
-      console.log('Skipping update check in development mode');
+      console.log("Skipping update check in development mode");
       return null;
     }
 
     // Replace with your actual Netlify URL for production
-    const UPDATE_URL = 'https://estim-update-xyz.netlify.app/version.json';
+    const UPDATE_URL = "https://estim-update-xyz.netlify.app/version.json";
 
     // Attempt to fetch update info with a timeout to prevent hanging
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
 
     const res = await fetch(UPDATE_URL, {
-      cache: 'no-store',
-      signal: controller.signal
+      cache: "no-store",
+      signal: controller.signal,
     });
     clearTimeout(timeoutId);
 
@@ -289,14 +303,17 @@ async function checkUpdate() {
     return null;
   } catch (e) {
     // Handle different types of errors appropriately
-    if (e.name === 'AbortError') {
-      console.warn('Update check timed out');
-    } else if (e.name === 'TypeError' && e.message.includes('fetch')) {
-      console.warn('Network error during update check (likely CORS in development):', e.message);
-    } else if (e.message.includes('404')) {
-      console.warn('Update server not found (404), skipping update check');
+    if (e.name === "AbortError") {
+      console.warn("Update check timed out");
+    } else if (e.name === "TypeError" && e.message.includes("fetch")) {
+      console.warn(
+        "Network error during update check (likely CORS in development):",
+        e.message,
+      );
+    } else if (e.message.includes("404")) {
+      console.warn("Update server not found (404), skipping update check");
     } else {
-      console.warn('Update check failed:', e.message);
+      console.warn("Update check failed:", e.message);
     }
     // In development or if there's a network/CORS issue, skip update check
     return null;
@@ -308,23 +325,23 @@ document.addEventListener("DOMContentLoaded", async () => {
   const update = await checkUpdate();
 
   // Check if we've already notified about this specific version
-  const notifiedVersion = localStorage.getItem('notifiedUpdateVersion');
+  const notifiedVersion = localStorage.getItem("notifiedUpdateVersion");
 
   if (update && update.version !== notifiedVersion) {
-    console.log('Update dispo 👀', update.message);
+    console.log("Update dispo 👀", update.message);
 
     // Store the notified version to prevent repeated notifications
-    localStorage.setItem('notifiedUpdateVersion', update.version);
+    localStorage.setItem("notifiedUpdateVersion", update.version);
 
     // Show a toast notification about the update
     showToast({
-      message: update.message || 'Nouvelle version disponible',
-      button: 'Mettre à jour',
+      message: update.message || "Nouvelle version disponible",
+      button: "Mettre à jour",
       onClick: () => {
         // Clear the notified version when updating so we can notify again if needed
-        localStorage.removeItem('notifiedUpdateVersion');
+        localStorage.removeItem("notifiedUpdateVersion");
         window.location.reload();
-      }
+      },
     });
 
     // Alternative: Simple reload after delay
@@ -357,7 +374,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const maxAttempts = 60; // 6 seconds max wait time (increased)
 
     while (!ionApp && attempts < maxAttempts) {
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, 100));
       ionApp = document.querySelector("ion-app");
       attempts++;
 
@@ -388,7 +405,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // Supprimer la page actuelle
-    const currentPage = ionApp.querySelector('page-home, page-event, page-plan, page-catg');
+    const currentPage = ionApp.querySelector(
+      "page-home, page-event, page-plan, page-catg",
+    );
     if (currentPage) {
       currentPage.remove();
     }
@@ -438,7 +457,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         profileBtn.classList.remove("text-estim-walnut");
         profileBtn.classList.add("text-estim-green");
       }
-    } else if (currentPath.includes("/event") || currentPath.includes("/plan")) {
+    } else if (
+      currentPath.includes("/event") ||
+      currentPath.includes("/plan")
+    ) {
       if (eventsIcon) eventsIcon.setAttribute("name", "calendar");
       const eventsBtn = document.getElementById("events-btn");
       if (eventsBtn) {
@@ -451,7 +473,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Mettre à jour la navbar au chargement initial
   updateActiveNav();
 
-  document.body.addEventListener("click", async (ev) => { // Make the click handler async
+  document.body.addEventListener("click", async (ev) => {
+    // Make the click handler async
     const el = ev.target.closest("[router-link]");
     if (!el) return;
     ev.preventDefault();
@@ -464,10 +487,30 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   // Écouter les changements d'URL pour mettre à jour la navbar
-  window.addEventListener("popstate", async () => { // Make the popstate handler async
+  window.addEventListener("popstate", async () => {
+    // Make the popstate handler async
     await renderCurrentPage(); // Await the async function
     updateActiveNav();
   });
 });
 
+async function btnInteraction(varInt, varNotInt1, varNotInt2) {
+  // varInt : Variable d'interaction
+  let a = await varInt;
+  let b = await varNotInt1;
+  let c = await varNotInt2;
+
+  if (!a || !b || !c) console.error("Interaction non disponible !");
+  else {
+    console.log("Interaction disponible");
+
+    a.addEventListener("click", () => {
+      a.classList.add("estim-active-btn");
+      b.classList.remove("estim-active-btn")
+      c.classList.remove("estim-active-btn")
+    });
+  }
+}
+
+export { btnInteraction };
 export { loadPage };

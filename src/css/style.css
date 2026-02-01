@@ -67,9 +67,9 @@
 }
 
 .estim-active-btn {
-    background-color: var(--estim-green); /* #117a2a -> Vert ESTIM */
+    background-color: var(--estim-walnut); /* #117a2a -> Vert ESTIM */
     color: #ffffff;
-    border: 1px solid var(--estim-green);
+    border: 1px solid var(--estim-walnut);
     border-radius: 12px;
     font-weight: 600;
     box-shadow: 0 4px 6px -1px rgba(17, 122, 42, 0.2);
@@ -193,7 +193,7 @@
 }
 
 .text-estim-green {
-	color: var(--estim-green);
+	color: var(--estim-walnut);
 }
 
 .bg-estim-pollen {
@@ -387,7 +387,7 @@ ion-menu {
 	--width: 17.5rem;
 	/* 280px -> 17.5rem */
 	background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(245, 245, 244, 0.95) 100%);
-	backdrop-filter: blur(10px);
+	backdrop-filter: blur(5px);
 	border-right: 1px solid rgba(0, 0, 0, 0.05);
 }
 
