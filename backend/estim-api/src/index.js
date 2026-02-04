@@ -30,7 +30,25 @@ app.get('/', (c) => c.text('API Hono en JS marche !'));
 // Retourne la liste complète (avec la clé "schedule")
 app.get('/api/schedule', (c) => c.json(schedule));
 
-app.get('/api/events', (c) => c.json(events));
+// Formatte les événements pour correspondre aux attentes du frontend
+app.get('/api/events', (c) => {
+  // Convertir les dates au format attendu par le frontend
+  const formattedEvents = events.map(event => {
+    // Extraire les informations de date
+    const date = new Date(event.date);
+    const months = ["JAN", "FÉV", "MAR", "AVR", "MAI", "JUI", "JUI", "AOÛ", "SEP", "OCT", "NOV", "DÉC"];
+
+    return {
+      ...event,
+      day: months[date.getMonth()] || "???",
+      dayNum: date.getDate(),
+      // Renommer category en type pour correspondre à l'ancien format si nécessaire
+      type: event.category
+    };
+  });
+
+  return c.json(formattedEvents);
+});
 
 // --- LANCEMENT DU SERVEUR ---
 const port = 5500;

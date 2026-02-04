@@ -1,108 +1,320 @@
 // --- event.js ---
 
 let rawData = null;
-let featuredData = null;
+let debounceTimer; // Timer pour la recherche
 
 // --- 0. APPEL API ---
 async function callApi() {
   const apiUrl = "http://localhost:5500/api/events";
+
   try {
     const response = await fetch(apiUrl);
+
     if (response.ok) {
       console.log("Données Événements reçues !");
       rawData = await response.json();
-
-      // Séparer l'élément vedette de la liste si nécessaire (optionnel, ou tu peux gérer ça dans le HTML direct)
-      // Ici on suppose que l'API renvoie tout et que le HTML gère le premier item comme featured ou qu'on a une propriété isFeatured
-      // Pour simplifier, on passe tout à displayEvents
       displayEvents(rawData);
     } else {
       console.error("Erreur API, statut:", response.status);
+      showError("Impossible de charger les événements (API Error).");
     }
   } catch (error) {
     console.error("Erreur fetch:", error);
-    const container = document.getElementById('events-container');
-    if (container) {
-        container.innerHTML = '<p class="text-red-500 text-center p-4">Erreur de connexion au serveur.</p>';
-    }
+    showError("Erreur de connexion au serveur. Vérifiez que le backend tourne.");
   }
 }
 
+function showError(msg) {
+    const container = document.getElementById('events-list-container');
+    if (container) {
+        container.innerHTML = `
+            <div class="text-center py-12 flex flex-col items-center">
+                <ion-icon name="alert-circle-outline" class="text-4xl text-red-400 mb-2"></ion-icon>
+                <p class="text-red-500 px-4">${msg}</p>
+                <button onclick="window.location.reload()" class="mt-4 px-4 py-2 bg-red-100 text-red-600 rounded-lg text-sm font-bold">Réessayer</button>
+            </div>
+        `;
+    }
+}
+
 // --- INITIALISATION ---
-// IMPORTANT : On exporte pour main.js
 export async function initEventPage() {
   console.log("Initialisation de la page Événements...");
-
-  // 1. Attendre les données
   await callApi();
-
-  // 2. Initialiser les écouteurs d'événements pour les filtres (si tu en as ajoutés dans le HTML)
   initFilters();
 }
 
+// --- FILTRE DE RECHERCHE (AVEC DEBOUNCE) ---
 function initFilters() {
-    // Logique si tu as des boutons de filtre dans le HTML
+    const searchInput = document.getElementById('search');
+    if (!searchInput) return;
+
+    searchInput.addEventListener('input', (e) => {
+        // Annuler le timer précédent
+        clearTimeout(debounceTimer);
+
+        const term = e.target.value.toLowerCase().trim();
+
+        // Attendre 300ms avant de lancer la recherche
+        debounceTimer = setTimeout(() => {
+            if (!rawData) return;
+
+            const filtered = rawData.filter(event => {
+                const title = (event.title || "").toLowerCase();
+                const category = (event.category || "").toLowerCase();
+                const location = (event.location || "").toLowerCase();
+                const organizer = (event.organizer || "").toLowerCase();
+
+                return title.includes(term) ||
+                       category.includes(term) ||
+                       location.includes(term) ||
+                       organizer.includes(term);
+            });
+
+            displayEvents(filtered);
+        }, 300);
+    });
+}
+
+// --- UTILITAIRES ---
+
+// Formate la date "2026-02-15" en { day: "FÉV", dayNum: 15 }
+// Correction du bug de fuseau horaire en parsant manuellement la chaîne
+function parseDateInfo(dateString) {
+    if (!dateString) return { day: "???", dayNum: "?", year: "----" };
+
+    // Sépare YYYY-MM-DD pour éviter le bug UTC (ex: 15 février devenant 14)
+    const parts = dateString.split('-');
+    if (parts.length !== 3) return { day: "ERR", dayNum: "?", year: "----" };
+
+    const year = parseInt(parts[0]);
+    const monthIndex = parseInt(parts[1]) - 1; // Mois JS commencent à 0
+    const day = parseInt(parts[2]);
+
+    // Créer l'objet date en forçant l'heure locale à midi pour éviter tout décalage
+    const date = new Date(year, monthIndex, day, 12, 0, 0);
+
+    const months = ["JAN", "FÉV", "MAR", "AVR", "MAI", "JUI", "JUI", "AOÛ", "SEP", "OCT", "NOV", "DÉC"];
+
+    return {
+        day: months[date.getMonth()] || "ERR",
+        dayNum: date.getDate(),
+        year: year
+    };
+}
+
+// Retourne un dégradé CSS selon la catégorie
+function getGradient(category) {
+    const cat = (category || "").toLowerCase();
+    const gradients = {
+        "technologie": "estim-gradient-tech",
+        "formation": "estim-gradient-formation",
+        "réseau": "estim-gradient-reseau",
+        "conférence": "estim-gradient-conference",
+        "default": "estim-gradient-default"
+    };
+
+    const foundKey = Object.keys(gradients).find(key => cat.includes(key));
+    return gradients[foundKey] || gradients["default"];
+}
+
+function getEventImage(category) {
+    const cat = (category || "").toLowerCase();
+    const images = {
+        "technologie": "/public/event.png",
+        "formation": "/public/calendar.png",
+        "réseau": "/public/annonce.png",
+        "conference": "/public/image.png",
+        "conférence": "/public/image.png",
+        "default": "/public/event.png"
+    };
+
+    const foundKey = Object.keys(images).find(key => cat.includes(key));
+    return images[foundKey] || images["default"];
+}
+
+function getBadgeInfo(event) {
+    const type = (event.type || event.kind || "").toLowerCase();
+    if (type.includes("annonce")) {
+        return { label: "Annonce", className: "is-announcement" };
+    }
+    return { label: "Événement", className: "is-event" };
 }
 
 // --- RENDU DE LA LISTE ---
 function displayEvents(events) {
     const listContainer = document.getElementById('events-list-container');
     if (!listContainer) return;
+
+    // Si vide après recherche
+    if (events.length === 0) {
+        listContainer.innerHTML = `
+            <div class="text-center py-10 text-gray-400 flex flex-col items-center animate-pulse">
+                <ion-icon name="search-outline" class="text-4xl mb-2"></ion-icon>
+                <p>Aucun événement ne correspond.</p>
+            </div>`;
+        return;
+    }
+
     listContainer.innerHTML = '';
 
-    // Filtrer pour ne pas afficher l'élément "Vedette" dans la liste (optionnel)
-    // Admettons que l'API renvoie une liste, on affiche tout sauf si c'est le featured
-    const listItems = events; // Adapte selon ta logique de featured
+    events.forEach(event => {
+        const dateInfo = parseDateInfo(event.date);
+        const gradientClass = getGradient(event.category);
+        const imageUrl = getEventImage(event.category);
+        const badgeInfo = getBadgeInfo(event);
 
-    listItems.forEach(event => {
         const card = document.createElement('div');
-        card.className = "estim-event-card w-full h-28 overflow-hidden relative cursor-pointer transition-transform active:scale-[0.98]";
+        card.className = "estim-event-card";
 
         card.innerHTML = `
-            <div class="flex h-full w-full">
-                <!-- Bloc Date (Gauche) -->
-                <div class="w-20 h-28 bg-gradient-to-br ${event.gradient || 'from-gray-400 to-gray-500'} flex flex-col justify-center items-center shrink-0 text-white">
-                    <span class="text-xs font-medium mb-1">${event.day || 'MAR'}</span>
-                    <span class="text-xl font-bold">${event.dayNum || '15'}</span>
+            <div class="estim-event-card__media ${gradientClass}">
+                <img src="${imageUrl}" alt="${event.title || "Événement"}" loading="lazy">
+                <div class="estim-event-card__date">
+                    <span>${dateInfo.day}</span>
+                    <strong>${dateInfo.dayNum}</strong>
                 </div>
+                <div class="estim-event-card__badge ${badgeInfo.className}">
+                    ${badgeInfo.label}
+                </div>
+            </div>
 
-                <!-- Contenu (Droite) -->
-                <div class="flex-1 p-4 flex flex-col justify-between relative">
-                    <div>
-                        <h4 class="text-base font-semibold text-gray-900 mb-1 leading-tight">${event.title}</h4>
-                        <p class="text-sm text-gray-600 leading-tight">${event.location}</p>
+            <div class="estim-event-card__content">
+                <h4 class="estim-event-card__title">${event.title || "Événement à venir"}</h4>
+
+                <div class="estim-event-card__meta">
+                    <div class="estim-event-card__meta-item">
+                        <ion-icon name="location-outline"></ion-icon>
+                        <span>${event.location || "Lieu à confirmer"}</span>
                     </div>
-
-                    <div class="flex justify-between items-center mt-2">
-                        ${event.price ? `
-                            <span class="text-indigo-500 font-semibold text-base">${event.price}</span>
-                        ` : '<span class="text-xs font-bold text-red-500 bg-red-50 px-2 py-0.5 rounded">ANNULÉ</span>'}
-
-                        ${event.participants ? `
-                            <div class="flex items-center text-xs text-gray-500">
-                                <ion-icon name="people-outline" class="text-gray-400 text-xs mr-1"></ion-icon>
-                                ${event.participants}
-                            </div>
-                        ` : ''}
+                    <div class="estim-event-card__meta-item">
+                        <ion-icon name="calendar-outline"></ion-icon>
+                        <span>${dateInfo.day} ${dateInfo.dayNum} ${dateInfo.year}</span>
                     </div>
                 </div>
 
-                <!-- Bouton Cœur -->
-                <div class="absolute right-4 top-1/2 -translate-y-1/2">
-                    <ion-icon name="heart-outline" class="text-gray-300 text-xl hover:text-red-400 transition-colors"></ion-icon>
+                <p class="estim-event-card__excerpt">
+                    ${event.description || "Plus d'informations disponibles dans la fiche de l'événement."}
+                </p>
+
+                <div class="estim-event-card__footer">
+                    <span class="estim-event-card__price ${event.price === 'Gratuit' ? 'is-free' : 'is-paid'} ${badgeInfo.label === "Annonce" ? "is-hidden" : ""}">
+                        ${badgeInfo.label === "Annonce" ? "" : (event.price || 'Prix ?')}
+                    </span>
+                    <button type="button" class="estim-event-card__cta" data-event-id="${event.id}">
+                        Plus d'infos
+                        <ion-icon name="chevron-forward"></ion-icon>
+                    </button>
                 </div>
             </div>
         `;
 
-        // Gestionnaire de clic pour ouvrir la modal (à définir si besoin)
-        card.onclick = () => openEventModal(event);
-
+        const button = card.querySelector('.estim-event-card__cta');
+        if (button) {
+            button.onclick = (ev) => {
+                ev.stopPropagation();
+                window.openEventModal(event);
+            };
+        }
         listContainer.appendChild(card);
     });
 }
 
-// --- MODALE SIMPLE (Optionnel) ---
+// --- GESTION DE LA MODALE ---
 window.openEventModal = function(event) {
-    alert(`Détails pour : ${event.title}\n${event.description}`);
-    // Tu peux réutiliser la logique de création de modal Ionic que tu avais avant si tu veux
+    const modal = document.getElementById('modal');
+    const modalContent = document.getElementById('modal-content');
+    const dateInfo = parseDateInfo(event.date);
+    const gradientClass = getGradient(event.category);
+    const imageUrl = getEventImage(event.category);
+
+    if (!modal || !modalContent) return;
+
+    // 1. Préparer le contenu
+    modalContent.innerHTML = `
+        <button onclick="closeEventModal()" class="estim-modal__close" aria-label="Fermer la modale">
+            <ion-icon name="close"></ion-icon>
+        </button>
+
+        <div class="estim-modal__hero ${gradientClass}">
+            <img src="${imageUrl}" alt="${event.title || "Événement"}" loading="lazy">
+            <div class="estim-modal__hero-text">
+                <div class="estim-modal__hero-day">${dateInfo.dayNum}</div>
+                <div class="estim-modal__hero-month">${dateInfo.day} ${dateInfo.year}</div>
+            </div>
+        </div>
+
+        <div class="estim-modal__header">
+            <span class="estim-modal__tag">${event.category || "INFO"}</span>
+            <h2 class="estim-modal__title">${event.title}</h2>
+        </div>
+
+        <div class="estim-modal__details">
+            <div class="estim-modal__detail">
+                <ion-icon name="location"></ion-icon>
+                <div>
+                    <p class="estim-modal__label">Lieu</p>
+                    <p class="estim-modal__value">${event.location || "Lieu à confirmer"}</p>
+                </div>
+            </div>
+            <div class="estim-modal__detail">
+                <ion-icon name="calendar"></ion-icon>
+                <div>
+                    <p class="estim-modal__label">Date</p>
+                    <p class="estim-modal__value">${dateInfo.day} ${dateInfo.dayNum} ${dateInfo.year}</p>
+                </div>
+            </div>
+            ${getBadgeInfo(event).label === "Événement" ? `
+            <div class="estim-modal__detail">
+                <ion-icon name="pricetag"></ion-icon>
+                <div>
+                    <p class="estim-modal__label">Tarif</p>
+                    <p class="estim-modal__value">${event.price || "Tarif à confirmer"}</p>
+                </div>
+            </div>` : ``}
+            <div class="estim-modal__detail">
+                <ion-icon name="person-circle"></ion-icon>
+                <div>
+                    <p class="estim-modal__label">Organisateur</p>
+                    <p class="estim-modal__value">${event.organizer || "Organisation ESTIM"}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="estim-modal__about">
+            <h3>
+                <ion-icon name="information-circle-outline"></ion-icon>
+                À propos
+            </h3>
+            <p>${event.description || "Aucune description disponible."}</p>
+        </div>
+
+        <button class="estim-modal__action">
+            <ion-icon name="calendar-check-outline"></ion-icon>
+            Réserver ma place
+        </button>
+    `;
+
+    // 2. Animation d'ouverture
+    modal.classList.remove('hidden');
+
+    // Petit délai pour laisser le DOM se rendre, puis on ouvre la feuille
+    requestAnimationFrame(() => {
+        modalContent.classList.add('is-open');
+    });
+};
+
+window.closeEventModal = function() {
+    const modal = document.getElementById('modal');
+    if (!modal) return;
+
+    // 1. Animation de sortie
+    const content = modal.querySelector('#modal-content');
+    content.classList.remove('is-open');
+
+    // 2. Cacher et nettoyer après l'animation (300ms = durée de transition Tailwind)
+    setTimeout(() => {
+        modal.classList.add('hidden');
+        content.innerHTML = '';
+    }, 300);
 };

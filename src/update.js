@@ -7,6 +7,11 @@ export async function checkUpdate() {
     const res = await fetch(UPDATE_URL, { cache: 'no-store' });
     const remote = await res.json();
 
+    if (res.ok) {
+      console.log("Hello, world");
+      
+    }
+
     if (remote.version !== CURRENT_VERSION) {
       return remote;
     }

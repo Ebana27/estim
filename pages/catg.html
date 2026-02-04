@@ -40,7 +40,7 @@
 
 </head>
 
-<body class="bg-gray-50 text-estim-black font-sans antialiased">
+<body class="bg-gray-50 text-estim-black font-sans antialiased estim-catg-page">
   <ion-app>
     <div class="ion-page">
 
@@ -61,56 +61,76 @@
 
       <!-- CONTENU -->
       <ion-content class="pb-24">
-        <div class="p-4 space-y-6">
+        <div class="p-4 space-y-6 estim-catg-layout">
 
           <!-- HERO SECTION -->
-          <div>
-            <div class="content-text-hero">
-              <h1 class="text-2xl font-bold mb-2">Découvrez les apps et services ESTIM</h1>
-              <p class="text-gray-600 text-md">Accédez facilement à votre emploi du temps et aux événements importants
-                de l'école.</p>
-            </div>
-            <img src="/public/app.png" alt="illustration application" class="w-full h-auto mb-4">
-          </div>
-
-          <!-- APPLICATIONS GRID -->
-          <div class="space-y-4">
-
-            <!-- CARD 1 : EMPLOI DU TEMPS -->
-            <div
-              class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 flex items-center justify-between cursor-pointer hover:bg-gray-50 transition-colors"
-              onclick="window.location.href='/plan'">
-              <div class="flex items-center">
-                <div
-                  class="w-12 h-12 rounded-xl bg-estim-green/10 flex items-center justify-center text-estim-green mr-4">
-                  <ion-icon name="calendar-outline" class="text-2xl"></ion-icon>
+          <section class="estim-catg-hero">
+            <div class="estim-catg-hero__content">
+              <span class="estim-catg-hero__pill">Applications & services</span>
+              <h1>Découvrez les apps et services ESTIM</h1>
+              <p>Accédez facilement à votre emploi du temps, vos annonces et aux événements importants.</p>
+              <div class="estim-catg-hero__meta">
+                <div class="estim-catg-meta-chip">
+                  <ion-icon name="school-outline"></ion-icon>
+                  <span>Campus digital</span>
                 </div>
-                <div>
-                  <h3 class="font-bold text-estim-black">Emploi du temps</h3>
-                  <p class="text-xs text-gray-500">Consultez votre calendrier académique</p>
+                <div class="estim-catg-meta-chip">
+                  <ion-icon name="time-outline"></ion-icon>
+                  <span>Infos en temps réel</span>
                 </div>
               </div>
-              <ion-icon name="chevron-forward" class="text-gray-400"></ion-icon>
+            </div>
+            <div class="estim-catg-hero__image">
+              <img src="/public/app.png" alt="illustration application">
+            </div>
+          </section>
+
+          <!-- APPLICATIONS GRID -->
+          <div class="estim-catg-grid">
+
+            <!-- CARD 1 : EMPLOI DU TEMPS -->
+            <div class="estim-catg-card is-plan" onclick="window.location.href='/plan'">
+              <div class="estim-catg-card__icon">
+                <ion-icon name="calendar-outline"></ion-icon>
+              </div>
+              <div class="estim-catg-card__content">
+                <h3>Emploi du temps</h3>
+                <p>Consultez votre calendrier académique et vos cours.</p>
+                <div class="estim-catg-card__tags">
+                  <span>Planning</span>
+                  <span>Semaines</span>
+                </div>
+              </div>
+              <ion-icon name="chevron-forward" class="estim-catg-card__chevron"></ion-icon>
             </div>
 
             <!-- CARD 2 : ÉVÉNEMENTS -->
-            <div
-              class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 flex items-center justify-between cursor-pointer hover:bg-gray-50 transition-colors"
-              onclick="window.location.href='/event'">
-              <div class="flex items-center">
-                <div
-                  class="w-12 h-12 rounded-xl bg-estim-emerald/10 flex items-center justify-center text-estim-walnut mr-4">
-                  <ion-icon name="megaphone-outline" class="text-2xl"></ion-icon>
-                </div>
-                <div>
-                  <h3 class="font-bold text-estim-black">Événements</h3>
-                  <p class="text-xs text-gray-500">Restez informé des actualités</p>
+            <div class="estim-catg-card is-event" onclick="window.location.href='/event'">
+              <div class="estim-catg-card__icon">
+                <ion-icon name="megaphone-outline"></ion-icon>
+              </div>
+              <div class="estim-catg-card__content">
+                <h3>Événements</h3>
+                <p>Restez informé des annonces et activités du campus.</p>
+                <div class="estim-catg-card__tags">
+                  <span>Actualités</span>
+                  <span>Communauté</span>
                 </div>
               </div>
-              <ion-icon name="chevron-forward" class="text-gray-400"></ion-icon>
+              <ion-icon name="chevron-forward" class="estim-catg-card__chevron"></ion-icon>
             </div>
 
           </div>
+
+          <section class="estim-catg-note">
+            <div class="estim-catg-note__icon">
+              <ion-icon name="sparkles-outline"></ion-icon>
+            </div>
+            <div>
+              <h4>Astuce</h4>
+              <p>Activez les notifications pour ne rien manquer des annonces importantes.</p>
+            </div>
+          </section>
 
         </div>
       </ion-content>
